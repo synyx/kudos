@@ -3,6 +3,7 @@ import type { Config } from 'tailwindcss';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 import { skeleton } from '@skeletonlabs/tw-plugin';
+import { kudosTheme } from "./kudos-theme";
 
 export default {
   darkMode: 'class',
@@ -18,12 +19,9 @@ export default {
     typography,
     skeleton({
       themes: {
-        preset: [
-          {
-            name: 'gold-nouveau',
-            enhancements: true,
-          },
-        ],
+        custom: [
+          kudosTheme,
+        ]
       },
     }),
   ],
