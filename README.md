@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="res/kudo-monster.svg">
+</div>
+
 # Kudos
 
 👏 **Kudos** is a versatile and interactive web application, meticulously crafted to revolutionize the way you appreciate and celebrate your colleagues in the workplace. Kudos allows you not only to send tailor-made "Kudo" cards, but also to enhance them with your personal touch.
