@@ -211,7 +211,7 @@
 
 		<div class="flex items-center w-1/4">
 			<button
-				class="btn btn-xl w-full variant-soft-success p-3"
+				class="btn btn-xl w-full variant-soft-secondary p-3"
 				type="submit"
 				use:popup={{
 					event: 'hover',
