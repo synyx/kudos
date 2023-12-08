@@ -1,0 +1,29 @@
+.kudo-card-container {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+
+  .kudo-card-wrapper {
+    @apply flex;
+    @apply justify-center;
+    @apply snap-center;
+    @apply snap-always;
+    min-width: 100%;
+  }
+}
+
+.kudo-scroll-button {
+  @apply justify-center;
+  @apply items-center;
+  @apply font-extralight;
+  @apply text-6xl;
+  @apply select-none;
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+}

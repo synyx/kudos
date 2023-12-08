@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:14.4
+    environment:
+      POSTGRES_USER: kudos
+      POSTGRES_PASSWORD: secret
+    ports:
+      - '5432:5432'
+
+  #app:
+  #  build: .
+  #  environment:
+  #    DATABASE_URL: "postgresql://kudos:example@db:5432/kudos?schema=public"
+  #    ORIGIN: "http://localhost:3000"
+  #  ports:
+  #    - "3000:3000"

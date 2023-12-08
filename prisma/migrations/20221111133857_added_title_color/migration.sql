@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Kudo" ADD COLUMN     "titleColor" VARCHAR(6) NOT NULL DEFAULT '333333';

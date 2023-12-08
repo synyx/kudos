@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Kudo" ALTER COLUMN "titleColor" SET DEFAULT '#333333',
+ALTER COLUMN "titleColor" SET DATA TYPE VARCHAR(7);
