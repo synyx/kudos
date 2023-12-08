@@ -15,6 +15,20 @@ jobs:
   docker:
     runs-on: ubuntu-latest
 
+    # services:
+    #   postgres:
+    #     image: postgres:14.4
+    #     env:
+    #       POSTGRES_USER: kudos
+    #       POSTGRES_PASSWORD: secret
+    #     ports:
+    #       - 5432:5432
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+
     permissions:
       contents: read
       packages: write
@@ -39,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: '{{defaultContext}}'
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
