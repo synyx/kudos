@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: TODO
+  repository: ghcr.io/synyx/kudos:main
   pullPolicy: IfNotPresent
   tag: latest
 

@@ -7,10 +7,11 @@ services:
     ports:
       - '5432:5432'
 
-  #app:
+  app:
+    image: ghcr.io/synyx/kudos:main
   #  build: .
-  #  environment:
-  #    DATABASE_URL: "postgresql://kudos:example@db:5432/kudos?schema=public"
-  #    ORIGIN: "http://localhost:3000"
-  #  ports:
-  #    - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://kudos:example@db:5432/kudos?schema=public"
+      ORIGIN: "http://localhost:3000"
+    ports:
+      - "3000:3000"
