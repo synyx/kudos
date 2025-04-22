@@ -8,17 +8,21 @@
 
 	const toastStore = getToastStore();
 
-	export let form: ActionData;
-	let formElement: HTMLFormElement;
-	let undoSvg: () => void;
-	let redoSvg: () => void;
-	let svgActive = false;
+	interface Props {
+		form: ActionData;
+	}
 
-	let strokes: Strokes;
+	let { form }: Props = $props();
+	let formElement: HTMLFormElement = $state();
+	let undoSvg: () => void = $state();
+	let redoSvg: () => void = $state();
+	let svgActive = $state(false);
+
+	let strokes: Strokes = $state();
 </script>
 
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (!svgActive) {
 			return;
 		}

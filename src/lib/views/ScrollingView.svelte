@@ -1,23 +1,33 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import Icon from '@iconify/svelte';
 	import debounce from 'debounce';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import './scrollview.scss';
 
-	export let disableLeftScrollButton = false;
-	export let disableRightScrollButton = false;
-	export let scrollElementSelector: string;
+	interface Props {
+		disableLeftScrollButton?: boolean;
+		disableRightScrollButton?: boolean;
+		scrollElementSelector: string;
+		children?: import('svelte').Snippet;
+	}
+
+	let {
+		disableLeftScrollButton = false,
+		disableRightScrollButton = false,
+		scrollElementSelector,
+		children
+	}: Props = $props();
 
 	const dispatch = createEventDispatcher<{
 		scroll: number;
 	}>();
 
 	const scrollTimeout = 400;
-	let lastScroll = 0;
-	let scrollContainer: HTMLElement;
+	let lastScroll = $state(0);
+	let scrollContainer: HTMLElement = $state();
 
-	$: disableLeftScrollButtonEffective = isScrollButtonDisabled(lastScroll, disableLeftScrollButton);
-	$: disableRightScrollButtonEffective = isScrollButtonDisabled(lastScroll, disableRightScrollButton);
 
 	const onWheel = debounce(_onWheel, 200);
 
@@ -64,10 +74,12 @@
 			scrollTo(-1);
 		}
 	}
+	let disableLeftScrollButtonEffective = $derived(isScrollButtonDisabled(lastScroll, disableLeftScrollButton));
+	let disableRightScrollButtonEffective = $derived(isScrollButtonDisabled(lastScroll, disableRightScrollButton));
 </script>
 
 <svelte:window
-	on:keydown={(e) => {
+	onkeydown={(e) => {
 		if (e.key === 'ArrowLeft' && !disableLeftScrollButtonEffective) {
 			e.preventDefault();
 			scrollTo(-1);
@@ -78,11 +90,11 @@
 	}}
 />
 
-<div class="w-full flex flex-col h-full" on:wheel|preventDefault={onWheel}>
+<div class="w-full flex flex-col h-full" onwheel={preventDefault(onWheel)}>
 	<div class="flex flex-row relative h-full items-center">
 		<button
 			class="kudo-scroll-button hidden md:flex dark:text-white absolute left-0 top-0 h-full pl-2"
-			on:click={() => scrollTo(-1)}
+			onclick={() => scrollTo(-1)}
 			disabled={disableLeftScrollButtonEffective}
 		>
 			<Icon icon="mdi:chevron-left" />
@@ -90,13 +102,13 @@
 		<div
 			class="kudo-card-container m-0 flex flex-row overflow-x-scroll snap-x snap-mandatory h-full items-center"
 			bind:this={scrollContainer}
-			on:scroll={scrolling}
+			onscroll={scrolling}
 		>
-			<slot />
+			{@render children?.()}
 		</div>
 		<button
 			class="kudo-scroll-button hidden md:flex dark:text-white absolute h-full right-0 top-0 pr-2"
-			on:click={() => scrollTo(1)}
+			onclick={() => scrollTo(1)}
 			disabled={disableRightScrollButtonEffective}
 		>
 			<Icon icon="mdi:chevron-right" />
@@ -105,14 +117,14 @@
 	<div class="flex md:hidden flex-row justify-around m-10">
 		<button
 			class="kudo-scroll-button dark:text-white"
-			on:click={() => scrollTo(-1)}
+			onclick={() => scrollTo(-1)}
 			disabled={disableLeftScrollButtonEffective}
 		>
 			<Icon icon="mdi:chevron-left" /></button
 		>
 		<button
 			class="kudo-scroll-button dark:text-white"
-			on:click={() => scrollTo(1)}
+			onclick={() => scrollTo(1)}
 			disabled={disableRightScrollButtonEffective}
 		>
 			<Icon icon="mdi:chevron-right" />

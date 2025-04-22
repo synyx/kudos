@@ -1,11 +1,15 @@
 <script lang="ts">
-	export let date = new Date();
-	export let id = '';
+	import { run } from 'svelte/legacy';
 
-	let dateString: string;
+	interface Props {
+		date?: any;
+		id?: string;
+	}
 
-	$: input(date);
-	$: output(dateString);
+	let { date = $bindable(new Date()), id = '' }: Props = $props();
+
+	let dateString: string = $state();
+
 
 	function input(date: Date | undefined) {
 		if (date && !isNaN(date.getTime())) {
@@ -16,6 +20,12 @@
 	function output(dateString: string) {
 		date = new Date(dateString);
 	}
+	run(() => {
+		input(date);
+	});
+	run(() => {
+		output(dateString);
+	});
 </script>
 
 <input class="input" {id} type="date" bind:value={dateString} />

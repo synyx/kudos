@@ -1,8 +1,12 @@
 <script lang="ts">
 	import DateInput from './DateInput.svelte';
 
-	export let dateFrom: Date;
-	export let dateTo: Date;
+	interface Props {
+		dateFrom: Date;
+		dateTo: Date;
+	}
+
+	let { dateFrom = $bindable(), dateTo = $bindable() }: Props = $props();
 </script>
 
 <div class="flex flex-col md:flex-row items-center gap-2">

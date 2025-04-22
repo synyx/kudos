@@ -1,23 +1,38 @@
 <script lang="ts">
 	import type { KudoTitle } from '../utils/kudoTitles';
 
-	export let kudoTitle: KudoTitle;
-	export let kudoId;
+	interface Props {
+		kudoTitle: KudoTitle;
+		kudoId: string;
+		title?: import('svelte').Snippet;
+		to?: import('svelte').Snippet;
+		content?: import('svelte').Snippet;
+		from?: import('svelte').Snippet;
+	}
+
+	let {
+		kudoTitle,
+		kudoId,
+		title,
+		to,
+		content,
+		from
+	}: Props = $props();
 </script>
 
 <div class="kudo-card" id={"kudo-card-" + kudoId}>
 	<div class="title h-1/5" style="background-color: {kudoTitle.color};">
-		<slot name="title" />
+		{@render title?.()}
 	</div>
 	<div class="content h-4/5 p-2 flex flex-col">
 		<div class="to mb-2 flex-grow-0">
-			<slot name="to" />
+			{@render to?.()}
 		</div>
 		<div class="w-full flex-grow">
-			<slot name="content" />
+			{@render content?.()}
 		</div>
 		<div class="from mt-2 flex-grow-0">
-			<slot name="from" />
+			{@render from?.()}
 		</div>
 	</div>
 </div>

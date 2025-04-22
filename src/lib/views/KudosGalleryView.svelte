@@ -2,7 +2,11 @@
 	import type { Kudo } from '@prisma/client';
 	import KudoCard from '../components/KudoCard.svelte';
 
-	export let kudos: Kudo[];
+	interface Props {
+		kudos: Kudo[];
+	}
+
+	let { kudos }: Props = $props();
 </script>
 
 <div class="flex flex-wrap justify-center gap-2 mb-10">

@@ -1,12 +1,9 @@
 <script lang="ts">
+	import { run, preventDefault } from 'svelte/legacy';
+
 	import { getStroke } from 'perfect-freehand';
 	import type { StrokeOptionsWithColor, Strokes } from '$lib/utils/types';
 
-	export let svgActive: boolean;
-	export let initialStrokes: Strokes = [];
-	export let renderFormField = false;
-	export let strokeOptions: StrokeOptionsWithColor | null = null;
-	export let animate = false;
 
 	export const clear = () => {
 		points = [];
@@ -30,22 +27,32 @@
 		}
 	};
 
-	let svgElement: SVGElement;
+	let svgElement: SVGElement = $state();
 
-	export let strokes: Strokes = initialStrokes;
+	interface Props {
+		svgActive: boolean;
+		initialStrokes?: Strokes;
+		renderFormField?: boolean;
+		strokeOptions?: StrokeOptionsWithColor | null;
+		animate?: boolean;
+		strokes?: Strokes;
+	}
+
+	let {
+		svgActive,
+		initialStrokes = [],
+		renderFormField = false,
+		strokeOptions = null,
+		animate = false,
+		strokes = $bindable(initialStrokes)
+	}: Props = $props();
 	let strokesHistory: Strokes[] = [[]];
 	let strokeHistoryId = 0;
-	let points: number[][] = [];
+	let points: number[][] = $state([]);
 
 	const viewBoxWidth = 520;
 	const viewBoxHeight = 200;
 
-	$: stroke = strokeOptions ? getStroke(points, strokeOptions) : [];
-	$: pathData = getSvgPathFromStroke(stroke);
-	$: strokesJson = JSON.stringify(strokes);
-	$: if (animate) {
-		setTimeout(() => animateSvg(), 0);
-	}
 
 	function getPoint(
 		e:
@@ -149,6 +156,14 @@
 			}
 		}
 	}
+	let stroke = $derived(strokeOptions ? getStroke(points, strokeOptions) : []);
+	let pathData = $derived(getSvgPathFromStroke(stroke));
+	let strokesJson = $derived(JSON.stringify(strokes));
+	run(() => {
+		if (animate) {
+			setTimeout(() => animateSvg(), 0);
+		}
+	});
 </script>
 
 <div
@@ -161,11 +176,11 @@
 		viewBox="0 0 {viewBoxWidth} {viewBoxHeight}"
 		preserveAspectRatio="none"
 		bind:this={svgElement}
-		on:pointerdown={handlePointerDown}
-		on:pointerup={handlePointerUp}
-		on:touchend|preventDefault={handlePointerUp}
-		on:pointermove={handlePointerMove}
-		on:touchmove|preventDefault={handlePointerMove}
+		onpointerdown={handlePointerDown}
+		onpointerup={handlePointerUp}
+		ontouchend={preventDefault(handlePointerUp)}
+		onpointermove={handlePointerMove}
+		ontouchmove={preventDefault(handlePointerMove)}
 		style="touchAction: 'none'"
 	>
 		{#if animate}

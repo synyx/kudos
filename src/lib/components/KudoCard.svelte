@@ -7,17 +7,21 @@
 	import Icon from "@iconify/svelte";
 	import html2canvas from "html2canvas";
 
-	export let kudo: Kudo;
-	$: kudoId = `${kudo.id}`
-	$: kudoTitle = kudoTitles[kudo.kudoTitle as KudoTitles];
-	$: content = kudo.content;
-	$: to = kudo.to;
-	$: from = kudo.from;
-	$: img = JSON.parse(kudo.img);
 
-	export let animate = false;
-	export let hideDownloadButton = false;
-	let _animate = true;
+	interface Props {
+		kudo: Kudo;
+		animate?: boolean;
+		hideDownloadButton?: boolean;
+	}
+
+	let { kudo, animate = false, hideDownloadButton = false }: Props = $props();
+	let _animate = $state(true);
+	let kudoTitle = $derived(kudoTitles[kudo.kudoTitle as KudoTitles]);
+	let content = $derived(kudo.content);
+	let to = $derived(kudo.to);
+	let from = $derived(kudo.from);
+	let img = $derived(JSON.parse(kudo.img));
+	let kudoId = $derived(`${kudo.id}`);
 
 	async function downloadKudoCard() {
 		const elementId = "kudo-card-" + kudoId;
@@ -48,26 +52,34 @@
 
 <BaseKudoCard {kudoTitle} {kudoId}>
 	<!-- TODO: fix this type error -->
-	<p use:viewport on:enterViewport={() => (_animate = true)} on:exitViewport={() => (_animate = false)} slot="title" class="kudo-title">
-		{kudoTitle.text}
-		{#if !hideDownloadButton}
-			<button on:click={downloadKudoCard} class="download-btn">
-				<Icon class="download-icon" icon="mdi:download"/>
-			</button>
-		{/if}
-	</p>
-	<div class="relative overflow-hidden h-full" slot="content">
-		{#if img.length > 0}
-			{#if animate}
-				<Svg animate={_animate} renderFormField={false} svgActive={false} initialStrokes={img} />
-			{:else}
-				<Svg animate={false} renderFormField={false} svgActive={false} initialStrokes={img} />
+	{#snippet title()}
+		<p use:viewport onenterViewport={() => (_animate = true)} onexitViewport={() => (_animate = false)} >
+			{kudoTitle.text}
+			{#if !hideDownloadButton}
+				<button on:click={downloadKudoCard} class="download-btn">
+					<Icon class="download-icon" icon="mdi:download"/>
+				</button>
 			{/if}
-		{/if}
-		<p class="absolute top-0 left-0 whitespace-pre-wrap kudo-content">{content}</p>
-	</div>
-	<p slot="to">Für: <b>{to}</b></p>
-	<p slot="from">Von: <b>{from}</b></p>
+		</p>
+	{/snippet}
+	{#snippet content()}
+		<div class="relative overflow-hidden h-full" >
+			{#if img.length > 0}
+				{#if animate}
+					<Svg animate={_animate} renderFormField={false} svgActive={false} initialStrokes={img} />
+				{:else}
+					<Svg animate={false} renderFormField={false} svgActive={false} initialStrokes={img} />
+				{/if}
+			{/if}
+			<p class="absolute top-0 left-0 whitespace-pre-wrap kudo-content">{content}</p>
+		</div>
+	{/snippet}
+	{#snippet to()}
+		<p >Für: <b>{to}</b></p>
+	{/snippet}
+	{#snippet from()}
+		<p >Von: <b>{from}</b></p>
+	{/snippet}
 </BaseKudoCard>
 
 <style>

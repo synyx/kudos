@@ -1,15 +1,21 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import Icon from '@iconify/svelte';
 	import { kudoTitles, type KudoTitle } from '../utils/kudoTitles';
 	import { popup } from '@skeletonlabs/skeleton';
 
-	export let currentTitle: KudoTitle = kudoTitles.CONGRATS;
+	interface Props {
+		currentTitle?: KudoTitle;
+	}
 
-	let dropDownContent: Element;
-	let dropDownButton: Element;
+	let { currentTitle = $bindable(kudoTitles.CONGRATS) }: Props = $props();
 
-	let show = false;
-	$: showClass = show ? 'show' : '';
+	let dropDownContent: Element = $state();
+	let dropDownButton: Element = $state();
+
+	let show = $state(false);
+	let showClass = $derived(show ? 'show' : '');
 
 	function windowClickEventlistener(event: MouseEvent) {
 		if (event.target && event.target !== dropDownButton) {
@@ -23,7 +29,7 @@
 	}
 </script>
 
-<svelte:window on:click={windowClickEventlistener} />
+<svelte:window onclick={windowClickEventlistener} />
 
 <div
 	class="dropdown w-full"
@@ -33,7 +39,7 @@
 		placement: 'top',
 	}}
 >
-	<button bind:this={dropDownButton} class="dropbtn inline-flex w-full" on:click|preventDefault={() => (show = !show)}>
+	<button bind:this={dropDownButton} class="dropbtn inline-flex w-full" onclick={preventDefault(() => (show = !show))}>
 		<div class="menu-icon pointer-events-none" class:show={show}>
 			<Icon icon="mdi:menu-down" />
 		</div>
@@ -42,7 +48,7 @@
 
 	<div class="card p-4 variant-filled-secondary" data-popup="changeTitlePopup">
 		<p>Titel ändern</p>
-		<div class="arrow variant-filled-secondary" />
+		<div class="arrow variant-filled-secondary"></div>
 	</div>
 
 	<div bind:this={dropDownContent} class="dropdown-content rounded-md {showClass}">
@@ -50,7 +56,7 @@
 			<button
 				style={`background-color: ${kudoTitle.color}`}
 				class="text-white block cursor-pointer overflow-hidden p-3"
-				on:click|preventDefault={() => kudoTitleSelected(kudoTitle)}
+				onclick={preventDefault(() => kudoTitleSelected(kudoTitle))}
 			>
 				{kudoTitle.text}
 			</button>

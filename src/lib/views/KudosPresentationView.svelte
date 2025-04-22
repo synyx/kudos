@@ -10,11 +10,14 @@
 
 	const modalStore = getModalStore();
 
-	export let kudos: Kudo[];
-	$: shuffeledKudos = shuffle([...kudos]);
+	interface Props {
+		kudos: Kudo[];
+	}
 
-	let started = false;
-	let kudoCardIndex = 0;
+	let { kudos }: Props = $props();
+
+	let started = $state(false);
+	let kudoCardIndex = $state(0);
 
 	function shuffle<T>(array: T[]): T[] {
 		for (let i = array.length - 1; i > 0; i--) {
@@ -47,12 +50,13 @@
 			}
 		}
 	}
+	let shuffeledKudos = $derived(shuffle([...kudos]));
 </script>
 
 {#if !started}
 	<div class="w-full h-full flex flex-col justify-center">
 		<div class="text-center">
-			<button class="btn btn-xl variant-filled-primary shadow-md shadow-secondary-500" on:click={() => (started = true)}
+			<button class="btn btn-xl variant-filled-primary shadow-md shadow-secondary-500" onclick={() => (started = true)}
 				>SHUFFLE & START!</button
 			>
 		</div>

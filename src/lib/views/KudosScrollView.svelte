@@ -3,8 +3,12 @@
 	import KudoCard from '../components/KudoCard.svelte';
 	import ScrollingView from './ScrollingView.svelte';
 
-	export let kudos: Kudo[];
-	let kudoCardIndex = 0;
+	interface Props {
+		kudos: Kudo[];
+	}
+
+	let { kudos }: Props = $props();
+	let kudoCardIndex = $state(0);
 </script>
 
 <ScrollingView

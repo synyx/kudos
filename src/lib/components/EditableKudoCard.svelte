@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import BaseKudoCard from './BaseKudoCard.svelte';
 	import KudoTitleSelect from './KudoTitleSelect.svelte';
 	import { kudoTitles, type KudoTitle, type KudoTitles } from '../utils/kudoTitles';
@@ -11,88 +13,112 @@
 
 	const modalStore = getModalStore();
 
-	export let initialKudoTitleId: KudoTitles;
-	export let initialContent = '';
-	export let initialTo = '';
-	export let initialFrom = '';
-	export let initialStrokes: Strokes = [];
 
-	let clearSvg: () => void;
-	export let undoSvg = () => {
-		/*noop*/
-	};
-	export let redoSvg = () => {
-		/*noop*/
-	};
-	export let svgActive: boolean;
+	let clearSvg: () => void = $state();
 	let thinning = 0.5;
 	let smoothing = 0.5;
 	let streamline = 0.5;
 
-	let kudoTitle: KudoTitle = initialKudoTitleId ? kudoTitles[initialKudoTitleId] : kudoTitles.CONGRATS;
+	let kudoTitle: KudoTitle = $state(initialKudoTitleId ? kudoTitles[initialKudoTitleId] : kudoTitles.CONGRATS);
 
-	$: content = initialContent;
-	$: to = initialTo;
-	$: from = initialFrom;
-	$: strokeOptions = {
+
+	interface Props {
+		initialKudoTitleId: KudoTitles;
+		initialContent?: string;
+		initialTo?: string;
+		initialFrom?: string;
+		initialStrokes?: Strokes;
+		undoSvg?: any;
+		/*noop*/
+		redoSvg?: any;
+		/*noop*/
+		svgActive: boolean;
+		strokes?: Strokes;
+	}
+
+	let {
+		initialKudoTitleId,
+		initialContent = '',
+		initialTo = '',
+		initialFrom = '',
+		initialStrokes = [],
+		undoSvg = $bindable(() => {
+		/*noop*/
+	}),
+		redoSvg = $bindable(() => {
+		/*noop*/
+	}),
+		svgActive = $bindable(),
+		strokes = $bindable(initialStrokes)
+	}: Props = $props();
+	let content = $derived(initialContent);
+	let to = $derived(initialTo);
+	let from = $derived(initialFrom);
+	let strokeOptions = $derived({
 		size: $drawSettings.size,
 		thinning,
 		smoothing,
 		streamline,
 		colorFill: $drawSettings.colorFill,
 		colorFillOpacity: $drawSettings.colorFillOpacity,
-	};
-
-	export let strokes: Strokes = initialStrokes;
+	});
 </script>
 
 <div class="flex flex-col space-y-2">
 	<BaseKudoCard bind:kudoTitle>
-		<KudoTitleSelect slot="title" bind:currentTitle={kudoTitle} />
-		<div class="relative h-full" slot="content">
-			<input type="hidden" name="kudoTitle" bind:value={kudoTitle.id} />
-			<Svg
-				bind:clear={clearSvg}
-				bind:undo={undoSvg}
-				bind:redo={redoSvg}
-				{strokeOptions}
-				renderFormField={true}
-				{svgActive}
-				{initialStrokes}
-				bind:strokes
-			/>
-			<textarea
-				class="kudo-content w-full max-h-full bg-transparent overflow-hidden resize-none absolute top-0 left-0 {!svgActive
-					? ''
-					: 'pointer-events-none'} border-0"
-				name="content"
-				bind:value={content}
-				placeholder="<Kudos>"
-				rows="8"
-			/>
-		</div>
-		<div slot="to" class="flex space-x-3 items-center">
-			<label for="to">Für:</label>
-			<input
-				bind:value={to}
-				class="flex-grow border-solid border-0 border-b-black border-b-2 bg-gray-200"
-				type="text"
-				name="to"
-				id="to"
-				placeholder="<Jemand>"
-			/>
-		</div>
-		<div slot="from" class="flex space-x-3 items-center">
-			<label for="from">Von:</label>
-			<input
-				bind:value={from}
-				class="flex-grow border-0 border-b-black border-b-2 bg-gray-200"
-				type="text"
-				name="from"
-				id="from"
-				placeholder="<Dir>"
-			/>
-		</div>
+		{#snippet title()}
+				<KudoTitleSelect  bind:currentTitle={kudoTitle} />
+			{/snippet}
+		{#snippet content()}
+				<div class="relative h-full" >
+				<input type="hidden" name="kudoTitle" bind:value={kudoTitle.id} />
+				<Svg
+					bind:clear={clearSvg}
+					bind:undo={undoSvg}
+					bind:redo={redoSvg}
+					{strokeOptions}
+					renderFormField={true}
+					{svgActive}
+					{initialStrokes}
+					bind:strokes
+				/>
+				<textarea
+					class="kudo-content w-full max-h-full bg-transparent overflow-hidden resize-none absolute top-0 left-0 {!svgActive
+						? ''
+						: 'pointer-events-none'} border-0"
+					name="content"
+					bind:value={content}
+					placeholder="<Kudos>"
+					rows="8"
+				></textarea>
+			</div>
+			{/snippet}
+		{#snippet to()}
+				<div  class="flex space-x-3 items-center">
+				<label for="to">Für:</label>
+				<input
+					bind:value={to}
+					class="flex-grow border-solid border-0 border-b-black border-b-2 bg-gray-200"
+					type="text"
+					name="to"
+					id="to"
+					placeholder="<Jemand>"
+				/>
+			</div>
+			{/snippet}
+		{#snippet from()}
+				<div  class="flex space-x-3 items-center">
+				<label for="from">Von:</label>
+				<input
+					bind:value={from}
+					class="flex-grow border-0 border-b-black border-b-2 bg-gray-200"
+					type="text"
+					name="from"
+					id="from"
+					placeholder="<Dir>"
+				/>
+			</div>
+			{/snippet}
 	</BaseKudoCard>
 	<div
 		class="flex flex-row justify-between items-end gap-2 dark:text-white bg-blue-300 dark:bg-blue-900 p-3 rounded-md"
@@ -112,7 +138,7 @@
 
 					<div class="card p-4 variant-filled-secondary" data-popup="toggleDrawPopup">
 						<p>{svgActive ? 'Deaktiviere' : 'Aktiviere'} die Leinwand</p>
-						<div class="arrow variant-filled-secondary" />
+						<div class="arrow variant-filled-secondary"></div>
 					</div>
 				</div>
 				<hr class="my-3" />
@@ -121,7 +147,7 @@
 						<button
 							class="btn grow"
 							id="undo"
-							on:click|preventDefault={undoSvg}
+							onclick={preventDefault(undoSvg)}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
@@ -131,13 +157,13 @@
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="undoPopup">
 							<p>Rückgängig / Undo <kbd class="kbd">STRG + Z</kbd></p>
-							<div class="arrow variant-filled-secondary" />
+							<div class="arrow variant-filled-secondary"></div>
 						</div>
 
 						<button
 							class="btn grow"
 							id="redo"
-							on:click|preventDefault={redoSvg}
+							onclick={preventDefault(redoSvg)}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
@@ -147,7 +173,7 @@
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="redoPopup">
 							<p>Wiederholen / Redo <kbd class="kbd">STRG + SHIFT + Z</kbd>, <kbd class="kbd">STRG + Y</kbd></p>
-							<div class="arrow variant-filled-secondary" />
+							<div class="arrow variant-filled-secondary"></div>
 						</div>
 					</div>
 					<hr class="my-3" />
@@ -192,7 +218,7 @@
 						<button
 							class="w-full btn variant-filled-error"
 							id="clear"
-							on:click|preventDefault={clearSvg}
+							onclick={preventDefault(clearSvg)}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
@@ -202,7 +228,7 @@
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="clearPopup">
 							<p>Löscht deine Zeichnung, kann rückgängig gemacht werden.</p>
-							<div class="arrow variant-filled-secondary" />
+							<div class="arrow variant-filled-secondary"></div>
 						</div>
 					</div>
 				</div>
@@ -226,7 +252,7 @@
 			>
 			<div class="card p-4 variant-filled-secondary" data-popup="submitPopup">
 				<p>Erstellen</p>
-				<div class="arrow variant-filled-secondary" />
+				<div class="arrow variant-filled-secondary"></div>
 			</div>
 		</div>
 	</div>

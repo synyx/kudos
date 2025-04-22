@@ -7,17 +7,21 @@
 	import { viewMode } from '$lib/utils/stores';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
-	export let data: PageData;
-	$: ({ kudos: kudosAll } = data);
+	interface Props {
+		data: PageData;
+	}
 
-	let dateFrom: Date = new Date();
+	let { data }: Props = $props();
+	let { kudos: kudosAll } = $derived(data);
+
+	let dateFrom: Date = $state(new Date());
 	dateFrom.setDate(1);
 	dateFrom.setMonth(dateFrom.getMonth() - 1);
 	dateFrom = getFirstFridayFrom(dateFrom);
 	dateFrom.setDate(dateFrom.getDate() + 1);
 
-	let dateTo: Date = new Date();
-	$: dateTimeTo = () => {
+	let dateTo: Date = $state(new Date());
+	let dateTimeTo = $derived(() => {
 		const dateTimeTo = new Date(dateTo);
 		dateTimeTo.setHours(23);
 		dateTimeTo.setMinutes(59);
@@ -25,13 +29,13 @@
 		dateTimeTo.setMilliseconds(999);
 
 		return dateTimeTo;
-	};
+	});
 
-	let showArchived = false;
+	let showArchived = $state(false);
 
-	$: kudosFiltered = kudosAll.filter(
+	let kudosFiltered = $derived(kudosAll.filter(
 		(kudo) => kudo.createdAt >= dateFrom && kudo.createdAt <= dateTimeTo() && (!kudo.archived || showArchived),
-	);
+	));
 
 	function getFirstFridayFrom(originalDate: Date) {
 		const date = new Date(originalDate);
@@ -51,7 +55,7 @@
 	<div class="flex flex-col md:flex-row gap-4 p-3 items-center mb-2">
 		<DateRangeInput bind:dateFrom bind:dateTo />
 		<SlideToggle name="show-archived" size="sm" bind:checked={showArchived}>Archivierte anzeigen</SlideToggle>
-		<div class="flex-grow" />
+		<div class="flex-grow"></div>
 	</div>
 	<div class="flex flex-col flex-grow items-center justify-center gap-y-4">
 		{#if kudosFiltered.length <= 0}
