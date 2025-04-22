@@ -13,7 +13,7 @@ export const POST: RequestHandler = async ({ request }) => {
       where: { id: { in: kudoIds } },
     });
   } catch (e) {
-    throw error(500, `couldn't archive kudos: ${e}`);
+    error(500, `couldn't archive kudos: ${e}`);
   }
 
   return new Response('archived');
