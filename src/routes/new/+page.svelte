@@ -13,29 +13,11 @@
 	}
 
 	let { form }: Props = $props();
-	let formElement: HTMLFormElement = $state();
-	let undoSvg: () => void = $state();
-	let redoSvg: () => void = $state();
+	let formElement = $state<HTMLFormElement>();
 	let svgActive = $state(false);
 
-	let strokes: Strokes = $state();
+	let strokes = $state<Strokes>(JSON.parse(form?.img ?? '[]'));
 </script>
-
-<svelte:window
-	onkeydown={(e) => {
-		if (!svgActive) {
-			return;
-		}
-
-		if (e.ctrlKey) {
-			if (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) {
-				redoSvg();
-			} else if (e.key.toLowerCase() === 'z') {
-				undoSvg();
-			}
-		}
-	}}
-/>
 
 <div class="flex flex-col h-full justify-center">
 	<div class="flex flex-col flex-grow items-center justify-center">
@@ -72,13 +54,10 @@
 			{/if}
 			<EditableKudoCard
 				bind:svgActive
-				bind:undoSvg
-				bind:redoSvg
 				initialKudoTitleId={form?.kudoTitleId ?? 'THANKS'}
 				initialContent={form?.content}
 				initialTo={form?.to}
 				initialFrom={form?.from}
-				initialStrokes={JSON.parse(form?.img ?? '[]')}
 				bind:strokes
 			/>
 		</form>

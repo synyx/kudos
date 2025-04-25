@@ -66,9 +66,9 @@
 		<div class="relative overflow-hidden h-full" >
 			{#if img.length > 0}
 				{#if animate}
-					<Svg animate={_animate} renderFormField={false} svgActive={false} initialStrokes={img} />
+					<Svg animate={_animate} renderFormField={false} svgActive={false} strokes={img} />
 				{:else}
-					<Svg animate={false} renderFormField={false} svgActive={false} initialStrokes={img} />
+					<Svg animate={false} renderFormField={false} svgActive={false} strokes={img} />
 				{/if}
 			{/if}
 			<p class="absolute top-0 left-0 whitespace-pre-wrap kudo-content">{content}</p>

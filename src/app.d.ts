@@ -9,3 +9,10 @@ declare namespace App {
   // interface Session {}
   // interface Stuff {}
 }
+
+declare namespace svelteHTML {
+	interface HTMLAttributes<T> {
+		onenterViewport?: (e: CustomEvent) => void;
+		onexitViewport?: (e: CustomEvent) => void;
+	}
+}

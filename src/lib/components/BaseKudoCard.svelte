@@ -11,7 +11,7 @@
 	}
 
 	let {
-		kudoTitle,
+		kudoTitle = $bindable(),
 		kudoId,
 		title,
 		to,

@@ -10,28 +10,13 @@
 	import Icon from '@iconify/svelte';
 	import { SlideToggle, getModalStore, popup } from '@skeletonlabs/skeleton';
 	import { confirmed } from '$lib/actions/useButtonConfirmed';
-
-	const modalStore = getModalStore();
-
-
-	let clearSvg: () => void = $state();
-	let thinning = 0.5;
-	let smoothing = 0.5;
-	let streamline = 0.5;
-
-	let kudoTitle: KudoTitle = $state(initialKudoTitleId ? kudoTitles[initialKudoTitleId] : kudoTitles.CONGRATS);
-
+    import type { Component } from 'svelte';
 
 	interface Props {
 		initialKudoTitleId: KudoTitles;
 		initialContent?: string;
 		initialTo?: string;
 		initialFrom?: string;
-		initialStrokes?: Strokes;
-		undoSvg?: any;
-		/*noop*/
-		redoSvg?: any;
-		/*noop*/
 		svgActive: boolean;
 		strokes?: Strokes;
 	}
@@ -41,19 +26,22 @@
 		initialContent = '',
 		initialTo = '',
 		initialFrom = '',
-		initialStrokes = [],
-		undoSvg = $bindable(() => {
-		/*noop*/
-	}),
-		redoSvg = $bindable(() => {
-		/*noop*/
-	}),
 		svgActive = $bindable(),
-		strokes = $bindable(initialStrokes)
+		strokes = $bindable([])
 	}: Props = $props();
-	let content = $derived(initialContent);
-	let to = $derived(initialTo);
-	let from = $derived(initialFrom);
+
+	const modalStore = getModalStore();
+
+	let svgElement: ReturnType<typeof Svg>;
+	let thinning = 0.5;
+	let smoothing = 0.5;
+	let streamline = 0.5;
+
+	let kudoTitle: KudoTitle = $state(initialKudoTitleId ? kudoTitles[initialKudoTitleId] : kudoTitles.CONGRATS);
+
+	let contentValue = $derived(initialContent);
+	let toValue = $derived(initialTo);
+	let fromValue = $derived(initialFrom);
 	let strokeOptions = $derived({
 		size: $drawSettings.size,
 		thinning,
@@ -64,6 +52,23 @@
 	});
 </script>
 
+
+<svelte:window
+	onkeydown={(e) => {
+		if (!svgActive) {
+			return;
+		}
+
+		if (e.ctrlKey) {
+			if (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) {
+				svgElement.redoShit();
+			} else if (e.key.toLowerCase() === 'z') {
+				svgElement.undoShit();
+			}
+		}
+	}}
+/>
+
 <div class="flex flex-col space-y-2">
 	<BaseKudoCard bind:kudoTitle>
 		{#snippet title()}
@@ -73,13 +78,10 @@
 				<div class="relative h-full" >
 				<input type="hidden" name="kudoTitle" bind:value={kudoTitle.id} />
 				<Svg
-					bind:clear={clearSvg}
-					bind:undo={undoSvg}
-					bind:redo={redoSvg}
+					bind:this={svgElement}
 					{strokeOptions}
 					renderFormField={true}
 					{svgActive}
-					{initialStrokes}
 					bind:strokes
 				/>
 				<textarea
@@ -87,7 +89,7 @@
 						? ''
 						: 'pointer-events-none'} border-0"
 					name="content"
-					bind:value={content}
+					bind:value={contentValue}
 					placeholder="<Kudos>"
 					rows="8"
 				></textarea>
@@ -97,7 +99,7 @@
 				<div  class="flex space-x-3 items-center">
 				<label for="to">Für:</label>
 				<input
-					bind:value={to}
+					bind:value={toValue}
 					class="flex-grow border-solid border-0 border-b-black border-b-2 bg-gray-200"
 					type="text"
 					name="to"
@@ -110,7 +112,7 @@
 				<div  class="flex space-x-3 items-center">
 				<label for="from">Von:</label>
 				<input
-					bind:value={from}
+					bind:value={fromValue}
 					class="flex-grow border-0 border-b-black border-b-2 bg-gray-200"
 					type="text"
 					name="from"
@@ -147,7 +149,7 @@
 						<button
 							class="btn grow"
 							id="undo"
-							onclick={preventDefault(undoSvg)}
+							onclick={preventDefault(() => svgElement.undoShit())}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
@@ -163,7 +165,7 @@
 						<button
 							class="btn grow"
 							id="redo"
-							onclick={preventDefault(redoSvg)}
+							onclick={preventDefault(() => svgElement.redoShit())}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
@@ -218,7 +220,7 @@
 						<button
 							class="w-full btn variant-filled-error"
 							id="clear"
-							onclick={preventDefault(clearSvg)}
+							onclick={preventDefault(() => svgElement.clearShit())}
 							disabled={!svgActive}
 							use:popup={{
 								event: 'hover',
