@@ -6,7 +6,7 @@
 	import { getModalStore } from '@skeletonlabs/skeleton';
 	import KudoCard from '../components/KudoCard.svelte';
 	import ScrollingView from './ScrollingView.svelte';
-	import './scrollview.scss';
+	import './scrollview.pcss';
 
 	const modalStore = getModalStore();
 
@@ -14,7 +14,7 @@
 		kudos: Kudo[];
 	}
 
-	let { kudos }: Props = $props();
+	let { kudos = $bindable() }: Props = $props();
 
 	let started = $state(false);
 	let kudoCardIndex = $state(0);

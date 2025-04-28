@@ -37,7 +37,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.kudo-card {
 		@apply border-solid;
 		@apply border-gray-900;

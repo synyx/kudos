@@ -7,7 +7,7 @@
 		kudos: Kudo[];
 	}
 
-	let { kudos }: Props = $props();
+	let { kudos = $bindable() }: Props = $props();
 	let kudoCardIndex = $state(0);
 </script>
 

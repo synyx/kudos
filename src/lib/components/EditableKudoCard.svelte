@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
 
 	import BaseKudoCard from './BaseKudoCard.svelte';
 	import KudoTitleSelect from './KudoTitleSelect.svelte';
@@ -10,7 +9,7 @@
 	import Icon from '@iconify/svelte';
 	import { SlideToggle, getModalStore, popup } from '@skeletonlabs/skeleton';
 	import { confirmed } from '$lib/actions/useButtonConfirmed';
-    import type { Component } from 'svelte';
+    import { preventDefault } from '$lib/utils/eventModifiers';
 
 	interface Props {
 		initialKudoTitleId: KudoTitles;

@@ -11,8 +11,8 @@
 
 	let { currentTitle = $bindable(kudoTitles.CONGRATS) }: Props = $props();
 
-	let dropDownContent: Element = $state();
-	let dropDownButton: Element = $state();
+	let dropDownContent: Element;
+	let dropDownButton: Element;
 
 	let show = $state(false);
 	let showClass = $derived(show ? 'show' : '');
@@ -64,7 +64,7 @@
 	</div>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.dropbtn:hover {
 		filter: brightness(85%);
 	}

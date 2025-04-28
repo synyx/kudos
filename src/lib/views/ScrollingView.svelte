@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import Icon from '@iconify/svelte';
 	import debounce from 'debounce';
 	import { createEventDispatcher, onMount } from 'svelte';
-	import './scrollview.scss';
+	import './scrollview.pcss';
+    import { preventDefault } from '$lib/utils/eventModifiers';
 
 	interface Props {
 		disableLeftScrollButton?: boolean;
@@ -26,7 +25,7 @@
 
 	const scrollTimeout = 400;
 	let lastScroll = $state(0);
-	let scrollContainer: HTMLElement = $state();
+	let scrollContainer: HTMLElement;
 
 
 	const onWheel = debounce(_onWheel, 200);
@@ -74,6 +73,7 @@
 			scrollTo(-1);
 		}
 	}
+
 	let disableLeftScrollButtonEffective = $derived(isScrollButtonDisabled(lastScroll, disableLeftScrollButton));
 	let disableRightScrollButtonEffective = $derived(isScrollButtonDisabled(lastScroll, disableRightScrollButton));
 </script>

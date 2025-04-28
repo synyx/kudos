@@ -227,7 +227,7 @@
 	{/if}
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.canvas-wrapper {
 		width: 100%;
 		height: 100%;

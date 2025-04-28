@@ -8,7 +8,7 @@
 
 	let { date = $bindable(new Date()), id = '' }: Props = $props();
 
-	let dateString: string = $state();
+	let dateString: string = $state('');
 
 
 	function input(date: Date | undefined) {

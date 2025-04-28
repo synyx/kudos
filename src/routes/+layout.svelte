@@ -145,27 +145,21 @@
         >
           <TabAnchor href="/" selected={$viewMode === 'single'} on:click={() => ($viewMode = 'single')}>
             {#snippet lead()}
-                  {#snippet lead()}
                           <Icon  class="text-3xl w-full" icon="mdi:view-array" />
-                      {/snippet}
                   {/snippet}
             <span>Einzelmodus</span>
           </TabAnchor>
 
           <TabAnchor href="/" selected={$viewMode === 'gallery'} on:click={() => ($viewMode = 'gallery')}>
             {#snippet lead()}
-                  {#snippet lead()}
                           <Icon  class="text-3xl w-full" icon="mdi:view-module" />
-                      {/snippet}
                   {/snippet}
             <span>Galerie</span>
           </TabAnchor>
 
           <TabAnchor href="/" selected={$viewMode === 'presentation'} on:click={() => ($viewMode = 'presentation')}>
             {#snippet lead()}
-                  {#snippet lead()}
                           <Icon  class="text-3xl w-full" icon="mdi:presentation-play" />
-                      {/snippet}
                   {/snippet}
             <span>Präsentation</span>
           </TabAnchor>

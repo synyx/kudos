@@ -17,9 +17,9 @@
 	let { kudo, animate = false, hideDownloadButton = false }: Props = $props();
 	let _animate = $state(true);
 	let kudoTitle = $derived(kudoTitles[kudo.kudoTitle as KudoTitles]);
-	let content = $derived(kudo.content);
-	let to = $derived(kudo.to);
-	let from = $derived(kudo.from);
+	let contentValue = $derived(kudo.content);
+	let toValue = $derived(kudo.to);
+	let fromValue = $derived(kudo.from);
 	let img = $derived(JSON.parse(kudo.img));
 	let kudoId = $derived(`${kudo.id}`);
 
@@ -71,14 +71,14 @@
 					<Svg animate={false} renderFormField={false} svgActive={false} strokes={img} />
 				{/if}
 			{/if}
-			<p class="absolute top-0 left-0 whitespace-pre-wrap kudo-content">{content}</p>
+			<p class="absolute top-0 left-0 whitespace-pre-wrap kudo-content">{contentValue}</p>
 		</div>
 	{/snippet}
 	{#snippet to()}
-		<p >Für: <b>{to}</b></p>
+		<p >Für: <b>{toValue}</b></p>
 	{/snippet}
 	{#snippet from()}
-		<p >Von: <b>{from}</b></p>
+		<p >Von: <b>{fromValue}</b></p>
 	{/snippet}
 </BaseKudoCard>
 

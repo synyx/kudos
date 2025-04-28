@@ -6,7 +6,7 @@
 		kudos: Kudo[];
 	}
 
-	let { kudos }: Props = $props();
+	let { kudos = $bindable() }: Props = $props();
 </script>
 
 <div class="flex flex-wrap justify-center gap-2 mb-10">
@@ -15,5 +15,5 @@
 	{/each}
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 </style>
