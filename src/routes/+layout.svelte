@@ -25,6 +25,8 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Logo from '$lib/components/Logo.svelte';
+    import type { ViewMode } from '$lib/utils/types';
+    import { onMount } from 'svelte';
   interface Props {
     children?: import('svelte').Snippet;
   }
@@ -32,6 +34,12 @@
   let { children }: Props = $props();
 
   storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+  let viewModeWorkaround: ViewMode = $state($viewMode);
+
+  onMount(() => {
+    viewModeWorkaround = $viewMode;
+  });
 
   function navigateHome() {
     goto('/');
@@ -61,24 +69,25 @@
 
         <hr class="my-4" />
 
-        <AppRailTile bind:group={$viewMode} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome}>
+        <AppRailTile bind:group={viewModeWorkaround} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome} on:click={() => $viewMode = 'single'}>
           {#snippet lead()}
                 <Icon  class="text-3xl w-full" icon="mdi:view-array" />
               {/snippet}
         </AppRailTile>
 
-        <AppRailTile bind:group={$viewMode} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome}>
+        <AppRailTile bind:group={viewModeWorkaround} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome} on:click={() => $viewMode = 'gallery'}>
           {#snippet lead()}
                 <Icon  class="text-3xl w-full" icon="mdi:view-module" />
               {/snippet}
         </AppRailTile>
 
         <AppRailTile
-          bind:group={$viewMode}
+          bind:group={viewModeWorkaround}
           name="tile-presentation"
           value="presentation"
           title="Präsentationsmodus"
           on:click={navigateHome}
+          on:click={() => $viewMode = 'presentation'}
         >
           {#snippet lead()}
                 <Icon  class="text-3xl w-full" icon="mdi:presentation-play" />
