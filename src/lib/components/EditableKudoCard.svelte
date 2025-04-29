@@ -42,7 +42,7 @@
 	let toValue = $derived(initialTo);
 	let fromValue = $derived(initialFrom);
 	let strokeOptions = $derived({
-		size: $drawSettings.size,
+		size: $drawSettings.size, // TODO: BUG drawsettings reset...
 		thinning,
 		smoothing,
 		streamline,
@@ -131,7 +131,7 @@
 					use:popup={{
 						event: 'hover',
 						target: 'toggleDrawPopup',
-						placement: 'left',
+						placement: 'top',
 					}}
 				>
 					<label class="cursor-pointer" for="toggleDraw">Malen: </label>
@@ -153,11 +153,16 @@
 							use:popup={{
 								event: 'hover',
 								target: 'undoPopup',
-								placement: 'left',
+								placement: 'top',
 							}}><Icon icon="mdi:undo" /></button
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="undoPopup">
-							<p>Rückgängig / Undo <kbd class="kbd">STRG + Z</kbd></p>
+							<div class="flex flex-col gap-2">
+								<p>Rückgängig / Undo</p>
+								<div>
+									<kbd class="kbd">STRG + Z</kbd>
+								</div>
+							</div>
 							<div class="arrow variant-filled-secondary"></div>
 						</div>
 
@@ -169,11 +174,23 @@
 							use:popup={{
 								event: 'hover',
 								target: 'redoPopup',
-								placement: 'right',
+								placement: 'top',
 							}}><Icon icon="mdi:redo" /></button
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="redoPopup">
-							<p>Wiederholen / Redo <kbd class="kbd">STRG + SHIFT + Z</kbd>, <kbd class="kbd">STRG + Y</kbd></p>
+							<div class="w-32">
+								<div class="flex flex-col gap-2">
+								<p>
+									<span>Wiederholen / Redo</span>
+								</p>
+									<div>
+										<kbd class="kbd">STRG + SHIFT + Z</kbd>
+									</div>
+									<div>
+										<kbd class="kbd">STRG + Y</kbd>
+									</div>
+								</div>
+							</div>
 							<div class="arrow variant-filled-secondary"></div>
 						</div>
 					</div>
@@ -224,11 +241,15 @@
 							use:popup={{
 								event: 'hover',
 								target: 'clearPopup',
-								placement: 'left',
+								placement: 'top',
 							}}>Löschen</button
 						>
 						<div class="card p-4 variant-filled-secondary" data-popup="clearPopup">
-							<p>Löscht deine Zeichnung, kann rückgängig gemacht werden.</p>
+							<p>
+								<span>Löscht deine Zeichnung</span>
+								<br>
+								<small>kann rückgängig gemacht werden.</small>
+							</p>
 							<div class="arrow variant-filled-secondary"></div>
 						</div>
 					</div>
@@ -243,7 +264,7 @@
 				use:popup={{
 					event: 'hover',
 					target: 'submitPopup',
-					placement: 'right',
+					placement: 'top',
 				}}
 				use:confirmed={{
 					modalStore,

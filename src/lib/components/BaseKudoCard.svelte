@@ -44,7 +44,7 @@
 		@apply border-2;
 		@apply rounded-md;
 		@apply bg-gray-200;
-		@apply dark:text-black;
+		@apply text-black;
 
 		aspect-ratio: 556 / 380;
 
