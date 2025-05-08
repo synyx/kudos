@@ -5,11 +5,11 @@
 	import { kudoTitles, type KudoTitle, type KudoTitles } from '../utils/kudoTitles';
 	import type { Strokes } from '../utils/types';
 	import Svg from './Svg.svelte';
-	import { drawSettings } from '../utils/stores';
 	import Icon from '@iconify/svelte';
 	import { SlideToggle, getModalStore, popup } from '@skeletonlabs/skeleton';
 	import { confirmed } from '$lib/actions/useButtonConfirmed';
     import { preventDefault } from '$lib/utils/eventModifiers';
+    import { createDrawSettingsStore } from '$lib/utils/stores';
 
 	interface Props {
 		initialKudoTitleId: KudoTitles;
@@ -37,6 +37,8 @@
 	let streamline = 0.5;
 
 	let kudoTitle: KudoTitle = $state(initialKudoTitleId ? kudoTitles[initialKudoTitleId] : kudoTitles.CONGRATS);
+
+	const drawSettings = createDrawSettingsStore();
 
 	let contentValue = $derived(initialContent);
 	let toValue = $derived(initialTo);

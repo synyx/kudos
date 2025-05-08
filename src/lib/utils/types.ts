@@ -10,4 +10,6 @@ export type StrokeOptionsWithColor = StrokeOptions & {
   colorFillOpacity: number;
 };
 
-export type ViewMode = 'single' | 'gallery' | 'presentation';
+export const viewModes = ['single', 'gallery', 'presentation'] as const;
+
+export type ViewMode = typeof viewModes[number];

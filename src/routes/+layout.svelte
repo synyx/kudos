@@ -20,12 +20,11 @@
     TabAnchor,
   } from '@skeletonlabs/skeleton';
   import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-  import { viewMode } from '$lib/utils/stores';
+  import { createViewModeStore } from '$lib/utils/stores';
   import Icon from '@iconify/svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Logo from '$lib/components/Logo.svelte';
-    import type { ViewMode } from '$lib/utils/types';
     import { onMount } from 'svelte';
   interface Props {
     children?: import('svelte').Snippet;
@@ -35,11 +34,7 @@
 
   storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
-  let viewModeWorkaround: ViewMode = $state($viewMode);
-
-  onMount(() => {
-    viewModeWorkaround = $viewMode;
-  });
+  const viewMode = createViewModeStore();
 
   function navigateHome() {
     goto('/');
@@ -69,20 +64,23 @@
 
         <hr class="my-4" />
 
-        <AppRailTile bind:group={viewModeWorkaround} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome} on:click={() => $viewMode = 'single'}>
+        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
+        <AppRailTile group={$viewMode} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome} on:click={() => $viewMode = 'single'}>
           {#snippet lead()}
                 <Icon  class="text-3xl w-full" icon="mdi:view-array" />
               {/snippet}
         </AppRailTile>
 
-        <AppRailTile bind:group={viewModeWorkaround} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome} on:click={() => $viewMode = 'gallery'}>
+        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
+        <AppRailTile group={$viewMode} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome} on:click={() => $viewMode = 'gallery'}>
           {#snippet lead()}
                 <Icon  class="text-3xl w-full" icon="mdi:view-module" />
               {/snippet}
         </AppRailTile>
 
+        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
         <AppRailTile
-          bind:group={viewModeWorkaround}
+          group={$viewMode}
           name="tile-presentation"
           value="presentation"
           title="Präsentationsmodus"

@@ -4,7 +4,7 @@
 	import KudosScrollView from '$lib/views/KudosScrollView.svelte';
 	import KudosGalleryView from '$lib/views/KudosGalleryView.svelte';
 	import KudosPresentationView from '$lib/views/KudosPresentationView.svelte';
-	import { viewMode } from '$lib/utils/stores';
+	import { createViewModeStore } from '$lib/utils/stores';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 
 	interface Props {
@@ -36,6 +36,8 @@
 	let kudosFiltered = $derived(kudosAll.filter(
 		(kudo) => kudo.createdAt >= dateFrom && kudo.createdAt <= dateTimeTo() && (!kudo.archived || showArchived),
 	));
+
+	const viewMode = createViewModeStore();
 
 	function getFirstFridayFrom(originalDate: Date) {
 		const date = new Date(originalDate);
