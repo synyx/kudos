@@ -45,7 +45,7 @@
 <Modal />
 <Drawer />
 
-<AppShell>
+<AppShell regionPage="bg-gradient-to-b dark:from-surface-900 dark:to-surface-700 from-surface-50 to-surface-200">
   {#snippet sidebarLeft()}
     <div  class="hidden md:block h-full">
       <AppRail gap="gap-6">

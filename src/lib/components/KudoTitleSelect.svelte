@@ -46,7 +46,7 @@
 		{currentTitle.text}
 	</button>
 
-	<div class="card p-4 variant-filled-secondary" data-popup="changeTitlePopup">
+	<div class="card p-4 variant-filled-secondary text-base" data-popup="changeTitlePopup">
 		<p>Titel ändern</p>
 		<div class="arrow variant-filled-secondary"></div>
 	</div>
