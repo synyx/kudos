@@ -13,18 +13,18 @@
 
 	interface Props {
 		initialKudoTitleId: KudoTitles;
-		initialContent?: string;
-		initialTo?: string;
-		initialFrom?: string;
+		contentValue?: string;
+		toValue?: string;
+		fromValue?: string;
 		svgActive: boolean;
 		strokes?: Strokes;
 	}
 
 	let {
 		initialKudoTitleId,
-		initialContent = '',
-		initialTo = '',
-		initialFrom = '',
+		contentValue = $bindable(''),
+		toValue = $bindable(''),
+		fromValue = $bindable(''),
 		svgActive = $bindable(),
 		strokes = $bindable([])
 	}: Props = $props();
@@ -40,9 +40,6 @@
 
 	const drawSettings = createDrawSettingsStore();
 
-	let contentValue = $derived(initialContent);
-	let toValue = $derived(initialTo);
-	let fromValue = $derived(initialFrom);
 	let strokeOptions = $derived({
 		size: $drawSettings.size, // TODO: BUG drawsettings reset...
 		thinning,

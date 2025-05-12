@@ -16,7 +16,19 @@
 	let formElement = $state<HTMLFormElement>();
 	let svgActive = $state(false);
 
+	let contentValue = $state(form?.content ?? '');
+	let toValue = $state(form?.to ?? '');
+	let fromValue = $state(form?.from ?? '');
+
 	let strokes = $state<Strokes>(JSON.parse(form?.img ?? '[]'));
+
+	$effect(() => {
+		if(form) {
+			form.content = contentValue;
+			form.to = toValue;
+			form.from = fromValue;
+		}
+	});
 </script>
 
 <div class="flex flex-col h-full justify-center">
@@ -27,7 +39,7 @@
 			method="POST"
 			use:enhance={() => {
 				return async ({ result, update }) => {
-					await update();
+					await update({ reset: false });
 
 					if (result.type === 'success') {
 						toastStore.trigger({
@@ -35,6 +47,8 @@
 							background: 'variant-glass-success',
 						});
 						strokes = [];
+						contentValue = '';
+						toValue = '';
 					} else {
 						toastStore.trigger({
 							message: 'Erstellen fehlgeschlagen :(',
@@ -55,9 +69,9 @@
 			<EditableKudoCard
 				bind:svgActive
 				initialKudoTitleId={form?.kudoTitleId ?? 'THANKS'}
-				initialContent={form?.content}
-				initialTo={form?.to}
-				initialFrom={form?.from}
+				bind:contentValue
+				bind:toValue
+				bind:fromValue
 				bind:strokes
 			/>
 		</form>
