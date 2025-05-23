@@ -1,25 +1,25 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import DateRangeInput from '$lib/components/DateRangeInput.svelte';
 	import KudosScrollView from '$lib/views/KudosScrollView.svelte';
 	import KudosGalleryView from '$lib/views/KudosGalleryView.svelte';
 	import KudosPresentationView from '$lib/views/KudosPresentationView.svelte';
 	import { createViewModeStore } from '$lib/utils/stores';
-	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import type { PageData } from './$types';
+	import { Switch } from '@skeletonlabs/skeleton-svelte';
 
 	interface Props {
 		data: PageData;
 	}
 
 	let { data }: Props = $props();
-	let { kudos: kudosAll } = $derived(data);
+	let kudosAll = $derived(data.kudos);
 
-	let dateFrom: Date = $state(new Date());
-	dateFrom.setDate(1);
-	dateFrom.setMonth(dateFrom.getMonth() - 1);
-	dateFrom = getFirstFridayFrom(dateFrom);
-	dateFrom.setDate(dateFrom.getDate() + 1);
-
+	const lastMonth = new Date();
+	lastMonth.setDate(1);
+	lastMonth.setMonth(lastMonth.getMonth() - 1);
+	const lastMonthsFirstSaturday = getFirstSaturdayFrom(lastMonth);
+	let dateFrom: Date = $state(new Date(lastMonthsFirstSaturday));
+	
 	let dateTo: Date = $state(new Date());
 	let dateTimeTo = $derived(() => {
 		const dateTimeTo = new Date(dateTo);
@@ -33,17 +33,22 @@
 
 	let showArchived = $state(false);
 
-	let kudosFiltered = $derived(kudosAll.filter(
-		(kudo) => kudo.createdAt >= dateFrom && kudo.createdAt <= dateTimeTo() && (!kudo.archived || showArchived),
-	));
+	let kudosFiltered = $derived(
+		kudosAll.filter(
+			(kudo) =>
+				kudo.createdAt >= dateFrom &&
+				kudo.createdAt <= dateTimeTo() &&
+				(!kudo.archived || showArchived)
+		)
+	);
 
 	const viewMode = createViewModeStore();
 
-	function getFirstFridayFrom(originalDate: Date) {
+	function getFirstSaturdayFrom(originalDate: Date) {
 		const date = new Date(originalDate);
 
 		for (let i = 0; i < 8; i++) {
-			if (date.getDay() === 5) {
+			if (date.getDay() === 6) {
 				break;
 			}
 			date.setDate(date.getDate() + 1);
@@ -53,16 +58,18 @@
 	}
 </script>
 
-<div class="h-full flex flex-col">
-	<div class="flex flex-col md:flex-row gap-4 p-3 items-center mb-2">
+<div class="flex h-full flex-col">
+	<div class="mb-2 flex flex-col items-center gap-4 p-3 md:flex-row">
 		<DateRangeInput bind:dateFrom bind:dateTo />
-		<SlideToggle name="show-archived" size="sm" bind:checked={showArchived}>Archivierte anzeigen</SlideToggle>
-		<div class="flex-grow"></div>
+		<Switch checked={showArchived} onCheckedChange={(d) => (showArchived = d.checked)}
+			>Archivierte anzeigen</Switch
+		>
+		<div class="grow"></div>
 	</div>
-	<div class="flex flex-col flex-grow items-center justify-center gap-y-4">
+	<div class="h-full w-full overflow-hidden">
 		{#if kudosFiltered.length <= 0}
-			<div class="flex flex-row">
-				<p>Keine Kudos gefunden</p>
+			<div class="flex flex-row h-full w-full justify-center items-center">
+				<p class="text-3xl">Keine Kudos gefunden</p>
 			</div>
 		{:else if $viewMode === 'single'}
 			<KudosScrollView bind:kudos={kudosFiltered} />

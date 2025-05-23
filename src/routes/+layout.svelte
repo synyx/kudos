@@ -1,177 +1,155 @@
 <script lang="ts">
-  initializeStores();
+	import '../app.css';
+	import { Navigation } from '@skeletonlabs/skeleton-svelte';
+	import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
 
-  import '../app.postcss';
-  import {
-    AppRail,
-    AppRailAnchor,
-    AppRailTile,
-    AppShell,
-    Drawer,
-    LightSwitch,
-    Modal,
-    Toast,
-    modeCurrent,
-    setModeCurrent,
-    storePopup,
-    initializeStores,
-    AppBar,
-    TabGroup,
-    TabAnchor,
-  } from '@skeletonlabs/skeleton';
-  import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-  import { createViewModeStore } from '$lib/utils/stores';
-  import Icon from '@iconify/svelte';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/state';
-  import Logo from '$lib/components/Logo.svelte';
-    import { onMount } from 'svelte';
-  interface Props {
-    children?: import('svelte').Snippet;
-  }
+	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+	import { createViewModeStore } from '$lib/utils/stores';
+	import Icon from '@iconify/svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import Logo from '$lib/components/Logo.svelte';
+	import { AppBar } from '@skeletonlabs/skeleton-svelte';
+	import LightSwitch from '$lib/components/LightSwitch.svelte';
 
-  let { children }: Props = $props();
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
 
-  storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+	let { children }: Props = $props();
 
-  const viewMode = createViewModeStore();
+	const viewMode = createViewModeStore();
 
-  function navigateHome() {
-    goto('/');
-  }
+	function navigateHome() {
+		goto('/');
+	}
+
+	let activeNavItem = $derived.by(() => {
+		if (page.route.id === '/new') {
+			return 'create';
+		}
+
+		return $viewMode;
+	});
 </script>
 
-<Toast />
-<Modal />
-<Drawer />
+<div class="grid min-h-screen grid-rows-[auto_1fr_auto]">
+	<!-- Header -->
+	<header class="h-24 sticky top-0 z-10">
+		<AppBar>
+			{#snippet lead()}
+				<a href="/">
+					<div class="w-16">
+						<Logo />
+					</div>
+				</a>
+				<div>
+					{#if page.url.pathname !== '/'}
+						<a href="/" class="btn preset-soft-surface-100-900 font-bold"
+							><Icon icon="mdi:chevron-left"></Icon></a
+						>
+					{/if}
+				</div>
+			{/snippet}
+			{#snippet trail()}
+				<div class="flex items-center">
+					<a href="/new" type="button" class="btn btn-md preset-filled-primary-500"
+						>Kudo erstellen</a
+					>
+				</div>
+			{/snippet}
+		</AppBar>
+	</header>
+	<!-- Grid Columns -->
+	<div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
+		<!-- Left Sidebar. -->
+		<aside class="hidden h-[calc(100vh-6rem)] md:block sticky top-24">
+			<div class="hidden h-full justify-between md:flex md:flex-col">
+				<Navigation.Rail value={activeNavItem}>
+					{#snippet tiles()}
+						<Navigation.Tile
+							id="create"
+							label="Kudo erstellen"
+							labelClasses="text-center"
+							href="/new"><Icon class="text-3xl" icon="mdi:plus-circle" /></Navigation.Tile
+						>
+						<hr class="my-4 w-full" />
 
-<AppShell regionPage="bg-gradient-to-b dark:from-surface-900 dark:to-surface-700 from-surface-50 to-surface-200">
-  {#snippet sidebarLeft()}
-    <div  class="hidden md:block h-full">
-      <AppRail gap="gap-6">
-        {#snippet lead()}
-          
-            <AppRailAnchor href="/"><Logo/></AppRailAnchor>
-          
-          {/snippet}
+						<Navigation.Tile
+							id="single"
+							label="Einzelmodus"
+							href="/"
+							onclick={() => ($viewMode = 'single')}
+							><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
+						>
 
-        <AppRailAnchor href="/new" title="Kudo erstellen">
-          {#snippet lead()}
-                <Icon  class="text-3xl" icon="mdi:plus-circle" />
-              {/snippet}
-          Kudo erstellen
-        </AppRailAnchor>
+						<Navigation.Tile
+							id="gallery"
+							label="Galerie"
+							href="/"
+							onclick={() => ($viewMode = 'gallery')}
+							><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+						>
 
-        <hr class="my-4" />
+						<Navigation.Tile
+							id="presentation"
+							label="Präsentation"
+							href="/"
+							onclick={() => ($viewMode = 'presentation')}
+							><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+						>
+					{/snippet}
+				</Navigation.Rail>
 
-        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
-        <AppRailTile group={$viewMode} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome} on:click={() => $viewMode = 'single'}>
-          {#snippet lead()}
-                <Icon  class="text-3xl w-full" icon="mdi:view-array" />
-              {/snippet}
-        </AppRailTile>
+				<div class="flex flex-col items-center justify-center gap-4 p-4">
+					<LightSwitch />
+					<a
+						type="button"
+						class="btn btn-lg preset-filled"
+						href="https://github.com/synyx/kudos"
+						target="_blank"
+						onclick={() => ($viewMode = 'presentation')}
+					>
+						<Icon icon="mdi:github" />
+					</a>
+				</div>
+			</div>
+		</aside>
+		<!-- Main Content -->
+		<main
+			class="dark:from-surface-900 dark:to-surface-700 from-surface-50 to-surface-200 bg-linear-to-b max-w-screen overflow-x-hidden"
+		>
+			{@render children?.()}
+		</main>
+	</div>
+	<!-- Footer -->
+	<footer>
+		<div class="block md:hidden">
+			<Navigation.Bar value={activeNavItem}>
+				<Navigation.Tile
+					id="single"
+					label="Einzelmodus"
+					href="/"
+					onclick={() => ($viewMode = 'single')}
+					><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
+				>
 
-        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
-        <AppRailTile group={$viewMode} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome} on:click={() => $viewMode = 'gallery'}>
-          {#snippet lead()}
-                <Icon  class="text-3xl w-full" icon="mdi:view-module" />
-              {/snippet}
-        </AppRailTile>
+				<Navigation.Tile
+					id="gallery"
+					label="Galerie"
+					href="/"
+					onclick={() => ($viewMode = 'gallery')}
+					><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+				>
 
-        <!-- due to some bug in skeleton dev, we need to use the onclick event to change the viewmode. binding causes viewmode to be set to undefined during hydration -->
-        <AppRailTile
-          group={$viewMode}
-          name="tile-presentation"
-          value="presentation"
-          title="Präsentationsmodus"
-          on:click={navigateHome}
-          on:click={() => $viewMode = 'presentation'}
-        >
-          {#snippet lead()}
-                <Icon  class="text-3xl w-full" icon="mdi:presentation-play" />
-              {/snippet}
-        </AppRailTile>
-
-        {#snippet trail()}
-          
-            <AppRailTile
-              name="light-switch"
-              active="false"
-              on:click={() => {
-                setModeCurrent(!$modeCurrent);
-              }}
-              group="_"
-              value="0"
-              title="tile-3"
-            >
-              <div class="flex justify-center pointer-events-none">
-                <LightSwitch />
-              </div>
-            </AppRailTile>
-
-            <AppRailAnchor href="https://github.com/synyx/kudos" target="_blank" title="Source Code">
-              {#snippet lead()}
-                    <Icon  class="text-4xl" icon="mdi:github" />
-                  {/snippet}
-            </AppRailAnchor>
-          
-          {/snippet}
-      </AppRail>
-    </div>
-  {/snippet}
-
-  {#snippet pageHeader()}
-    <AppBar  slotTrail="place-content-end" class="block md:hidden">
-      {#snippet lead()}
-        <div >
-          {#if page.url.pathname !== '/'}
-            <a href="/" class="btn font-bold variant-soft-surface"><Icon icon="mdi:chevron-left"></Icon></a>
-          {/if}
-        </div>
-      {/snippet}
-      <a href="/"><Logo/></a>
-      {#snippet trail()}
-        <a  href="/new" class="btn variant-filled-primary">Kudo erstellen</a>
-      {/snippet}
-    </AppBar>
-  {/snippet}
-
-  {@render children?.()}
-
-  {#snippet footer()}
-    <div  class="block md:hidden">
-      {#if page.url.pathname === '/'}
-        <TabGroup
-          justify="justify-center"
-          active="variant-filled-primary"
-          hover="hover:variant-soft-primary"
-          flex="flex-1 lg:flex-none"
-          rounded=""
-          border=""
-          class="bg-surface-100-800-token w-full"
-        >
-          <TabAnchor href="/" selected={$viewMode === 'single'} on:click={() => ($viewMode = 'single')}>
-            {#snippet lead()}
-                          <Icon  class="text-3xl w-full" icon="mdi:view-array" />
-                  {/snippet}
-            <span>Einzelmodus</span>
-          </TabAnchor>
-
-          <TabAnchor href="/" selected={$viewMode === 'gallery'} on:click={() => ($viewMode = 'gallery')}>
-            {#snippet lead()}
-                          <Icon  class="text-3xl w-full" icon="mdi:view-module" />
-                  {/snippet}
-            <span>Galerie</span>
-          </TabAnchor>
-
-          <TabAnchor href="/" selected={$viewMode === 'presentation'} on:click={() => ($viewMode = 'presentation')}>
-            {#snippet lead()}
-                          <Icon  class="text-3xl w-full" icon="mdi:presentation-play" />
-                  {/snippet}
-            <span>Präsentation</span>
-          </TabAnchor>
-        </TabGroup>
-      {/if}
-    </div>
-  {/snippet}
-</AppShell>
+				<Navigation.Tile
+					id="presentation"
+					label="Präsentation"
+					href="/"
+					onclick={() => ($viewMode = 'presentation')}
+					><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+				>
+			</Navigation.Bar>
+		</div>
+	</footer>
+</div>

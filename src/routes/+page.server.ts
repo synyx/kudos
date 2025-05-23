@@ -1,8 +1,7 @@
-import { PrismaClient, type Kudo } from '@prisma/client';
+import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
-const prisma = new PrismaClient();
 
-export const load: PageServerLoad<{ kudos: Kudo[] }> = async () => {
-  const kudos = await prisma.kudo.findMany();
-  return { kudos };
+export const load: PageServerLoad = async () => {
+	const kudos = await db.query.kudos.findMany({});
+	return { kudos };
 };
