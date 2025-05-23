@@ -1,14 +1,11 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { invalidateAll } from '$app/navigation';
-	import { confirmed } from '$lib/actions/useButtonConfirmed';
-	import type { Kudo } from '@prisma/client';
-	import { getModalStore } from '@skeletonlabs/skeleton';
+	import { confirmed } from '$lib/actions/useButtonConfirmed.svelte';
 	import KudoCard from '../components/KudoCard.svelte';
 	import ScrollingView from './ScrollingView.svelte';
 	import './scrollview.pcss';
-
-	const modalStore = getModalStore();
+	import type { Kudo } from '$lib/utils/types';
 
 	interface Props {
 		kudos: Kudo[];
@@ -36,9 +33,9 @@
 		const response = await fetch('/api/archive', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(kudoIds),
+			body: JSON.stringify(kudoIds)
 		});
 
 		if (!response.ok) {
@@ -54,10 +51,11 @@
 </script>
 
 {#if !started}
-	<div class="w-full h-full flex flex-col justify-center">
+	<div class="flex h-full w-full flex-col justify-center">
 		<div class="text-center">
-			<button class="btn btn-xl variant-filled-primary shadow-md shadow-secondary-500" onclick={() => (started = true)}
-				>SHUFFLE & START!</button
+			<button
+				class="btn btn-xl preset-filled-primary-100-900 shadow-secondary-500 shadow-md"
+				onclick={() => (started = true)}>SHUFFLE & START!</button
 			>
 		</div>
 	</div>
@@ -70,23 +68,24 @@
 	>
 		{#each shuffeledKudos as kudo (kudo.id)}
 			<div class="kudo-card-wrapper">
-				<div class="w-min justify-center scale-100 sm:scale-125 lg:scale-150">
+				<div class="flex w-full scale-100 justify-center sm:scale-125 lg:scale-150">
 					<KudoCard animate={true} {kudo} hideDownloadButton/>
 				</div>
 			</div>
 		{/each}
 		<div class="kudo-card-wrapper">
-			<div class="w-min justify-center scale-150">
-				<h1 class="text-center text-3xl dark:text-white mb-3">Das war's</h1>
-				<button
-					class="btn btn-xl variant-filled-secondary shadow-md shadow-primary-500"
-					use:confirmed={{
-						modalStore,
-						title: 'Archivieren?',
-						body: 'Möchtest du die gezeigten Kudos archivieren?',
-						onConfirm: archiveAllShown,
-					}}>KUDOS ARCHIVIEREN</button
-				>
+			<div class="flex w-full scale-150 justify-center">
+				<div class="flex flex-col justify-center">
+					<h1 class="mb-3 text-center text-3xl dark:text-white">Das war's</h1>
+					<button
+						class="btn btn-xl preset-filled-secondary-100-900 shadow-primary-500 shadow-md"
+						use:confirmed={{
+							title: 'Archivieren?',
+							body: 'Möchtest du die gezeigten Kudos archivieren?',
+							onConfirm: archiveAllShown
+						}}>KUDOS ARCHIVIEREN</button
+					>
+				</div>
 			</div>
 		</div>
 	</ScrollingView>

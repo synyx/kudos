@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Kudo } from '@prisma/client';
+	import type { Kudo } from '$lib/utils/types';
 	import KudoCard from '../components/KudoCard.svelte';
 	import ScrollingView from './ScrollingView.svelte';
 
@@ -21,7 +21,7 @@
 >
 	{#each kudos as kudo (kudo.id)}
 		<div class="kudo-card-wrapper">
-			<div class="w-min justify-center">
+			<div class="w-full flex justify-center">
 				<KudoCard animate={true} {kudo} />
 			</div>
 		</div>

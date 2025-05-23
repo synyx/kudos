@@ -14,6 +14,3 @@
 		<KudoCard animate={false} {kudo} />
 	{/each}
 </div>
-
-<style lang="postcss">
-</style>
