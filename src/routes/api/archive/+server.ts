@@ -5,13 +5,13 @@ import { kudos } from '$lib/server/db/schema';
 import { inArray } from 'drizzle-orm';
 
 export const POST: RequestHandler = async ({ request }) => {
-	const kudoIds = await request.json();
+  const kudoIds = await request.json();
 
-	try {
-		await db.update(kudos).set({ archived: true }).where(inArray(kudos.id, kudoIds)).execute();
-	} catch (e) {
-		error(500, `couldn't archive kudos: ${e}`);
-	}
+  try {
+    await db.update(kudos).set({ archived: true }).where(inArray(kudos.id, kudoIds)).execute();
+  } catch (e) {
+    error(500, `couldn't archive kudos: ${e}`);
+  }
 
-	return new Response('archived');
+  return new Response('archived');
 };

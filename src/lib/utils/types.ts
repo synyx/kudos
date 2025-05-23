@@ -14,6 +14,6 @@ export type StrokeOptionsWithColor = StrokeOptions & {
 
 export const viewModes = ['single', 'gallery', 'presentation'] as const;
 
-export type ViewMode = typeof viewModes[number];
+export type ViewMode = (typeof viewModes)[number];
 
 export type Kudo = InferSelectModel<KudosTable>;

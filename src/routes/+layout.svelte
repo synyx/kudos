@@ -1,155 +1,128 @@
 <script lang="ts">
-	import '../app.css';
-	import { Navigation } from '@skeletonlabs/skeleton-svelte';
-	import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
+  import '../app.css';
+  import { Navigation } from '@skeletonlabs/skeleton-svelte';
+  import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
 
-	import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-	import { createViewModeStore } from '$lib/utils/stores';
-	import Icon from '@iconify/svelte';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import Logo from '$lib/components/Logo.svelte';
-	import { AppBar } from '@skeletonlabs/skeleton-svelte';
-	import LightSwitch from '$lib/components/LightSwitch.svelte';
+  import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
+  import { createViewModeStore } from '$lib/utils/stores';
+  import Icon from '@iconify/svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import Logo from '$lib/components/Logo.svelte';
+  import { AppBar } from '@skeletonlabs/skeleton-svelte';
+  import LightSwitch from '$lib/components/LightSwitch.svelte';
 
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
 
-	let { children }: Props = $props();
+  let { children }: Props = $props();
 
-	const viewMode = createViewModeStore();
+  const viewMode = createViewModeStore();
 
-	function navigateHome() {
-		goto('/');
-	}
+  function navigateHome() {
+    goto('/');
+  }
 
-	let activeNavItem = $derived.by(() => {
-		if (page.route.id === '/new') {
-			return 'create';
-		}
+  let activeNavItem = $derived.by(() => {
+    if (page.route.id === '/new') {
+      return 'create';
+    }
 
-		return $viewMode;
-	});
+    return $viewMode;
+  });
 </script>
 
 <div class="grid min-h-screen grid-rows-[auto_1fr_auto]">
-	<!-- Header -->
-	<header class="h-24 sticky top-0 z-10">
-		<AppBar>
-			{#snippet lead()}
-				<a href="/">
-					<div class="w-16">
-						<Logo />
-					</div>
-				</a>
-				<div>
-					{#if page.url.pathname !== '/'}
-						<a href="/" class="btn preset-soft-surface-100-900 font-bold"
-							><Icon icon="mdi:chevron-left"></Icon></a
-						>
-					{/if}
-				</div>
-			{/snippet}
-			{#snippet trail()}
-				<div class="flex items-center">
-					<a href="/new" type="button" class="btn btn-md preset-filled-primary-500"
-						>Kudo erstellen</a
-					>
-				</div>
-			{/snippet}
-		</AppBar>
-	</header>
-	<!-- Grid Columns -->
-	<div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
-		<!-- Left Sidebar. -->
-		<aside class="hidden h-[calc(100vh-6rem)] md:block sticky top-24">
-			<div class="hidden h-full justify-between md:flex md:flex-col">
-				<Navigation.Rail value={activeNavItem}>
-					{#snippet tiles()}
-						<Navigation.Tile
-							id="create"
-							label="Kudo erstellen"
-							labelClasses="text-center"
-							href="/new"><Icon class="text-3xl" icon="mdi:plus-circle" /></Navigation.Tile
-						>
-						<hr class="my-4 w-full" />
+  <!-- Header -->
+  <header class="h-24 sticky top-0 z-10">
+    <AppBar>
+      {#snippet lead()}
+        <a href="/">
+          <div class="w-16">
+            <Logo />
+          </div>
+        </a>
+        <div>
+          {#if page.url.pathname !== '/'}
+            <a href="/" class="btn preset-soft-surface-100-900 font-bold"><Icon icon="mdi:chevron-left"></Icon></a>
+          {/if}
+        </div>
+      {/snippet}
+      {#snippet trail()}
+        <div class="flex items-center">
+          <a href="/new" type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
+        </div>
+      {/snippet}
+    </AppBar>
+  </header>
+  <!-- Grid Columns -->
+  <div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
+    <!-- Left Sidebar. -->
+    <aside class="hidden h-[calc(100vh-6rem)] md:block sticky top-24">
+      <div class="hidden h-full justify-between md:flex md:flex-col">
+        <Navigation.Rail value={activeNavItem}>
+          {#snippet tiles()}
+            <Navigation.Tile id="create" label="Kudo erstellen" labelClasses="text-center" href="/new"
+              ><Icon class="text-3xl" icon="mdi:plus-circle" /></Navigation.Tile
+            >
+            <hr class="my-4 w-full" />
 
-						<Navigation.Tile
-							id="single"
-							label="Einzelmodus"
-							href="/"
-							onclick={() => ($viewMode = 'single')}
-							><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
-						>
+            <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
+              ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
+            >
 
-						<Navigation.Tile
-							id="gallery"
-							label="Galerie"
-							href="/"
-							onclick={() => ($viewMode = 'gallery')}
-							><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
-						>
+            <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
+              ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+            >
 
-						<Navigation.Tile
-							id="presentation"
-							label="Präsentation"
-							href="/"
-							onclick={() => ($viewMode = 'presentation')}
-							><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
-						>
-					{/snippet}
-				</Navigation.Rail>
+            <Navigation.Tile
+              id="presentation"
+              label="Präsentation"
+              href="/"
+              onclick={() => ($viewMode = 'presentation')}
+              ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+            >
+          {/snippet}
+        </Navigation.Rail>
 
-				<div class="flex flex-col items-center justify-center gap-4 p-4">
-					<LightSwitch />
-					<a
-						type="button"
-						class="btn btn-lg preset-filled"
-						href="https://github.com/synyx/kudos"
-						target="_blank"
-						onclick={() => ($viewMode = 'presentation')}
-					>
-						<Icon icon="mdi:github" />
-					</a>
-				</div>
-			</div>
-		</aside>
-		<!-- Main Content -->
-		<main
-			class="dark:from-surface-900 dark:to-surface-700 from-surface-50 to-surface-200 bg-linear-to-b max-w-screen overflow-x-hidden"
-		>
-			{@render children?.()}
-		</main>
-	</div>
-	<!-- Footer -->
-	<footer>
-		<div class="block md:hidden">
-			<Navigation.Bar value={activeNavItem}>
-				<Navigation.Tile
-					id="single"
-					label="Einzelmodus"
-					href="/"
-					onclick={() => ($viewMode = 'single')}
-					><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
-				>
+        <div class="flex flex-col items-center justify-center gap-4 p-4">
+          <LightSwitch />
+          <a
+            type="button"
+            class="btn btn-lg preset-filled"
+            href="https://github.com/synyx/kudos"
+            target="_blank"
+            onclick={() => ($viewMode = 'presentation')}
+          >
+            <Icon icon="mdi:github" />
+          </a>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content -->
+    <main
+      class="dark:from-surface-900 dark:to-surface-700 from-surface-50 to-surface-200 bg-linear-to-b max-w-screen overflow-x-hidden"
+    >
+      {@render children?.()}
+    </main>
+  </div>
+  <!-- Footer -->
+  <footer>
+    <div class="block md:hidden">
+      <Navigation.Bar value={activeNavItem}>
+        <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
+          ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
+        >
 
-				<Navigation.Tile
-					id="gallery"
-					label="Galerie"
-					href="/"
-					onclick={() => ($viewMode = 'gallery')}
-					><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
-				>
+        <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
+          ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+        >
 
-				<Navigation.Tile
-					id="presentation"
-					label="Präsentation"
-					href="/"
-					onclick={() => ($viewMode = 'presentation')}
-					><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
-				>
-			</Navigation.Bar>
-		</div>
-	</footer>
+        <Navigation.Tile id="presentation" label="Präsentation" href="/" onclick={() => ($viewMode = 'presentation')}
+          ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+        >
+      </Navigation.Bar>
+    </div>
+  </footer>
 </div>

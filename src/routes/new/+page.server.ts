@@ -33,10 +33,10 @@ export const actions: Actions = {
 
     await db.insert(kudos).values({
       kudoTitle: kudoTitleId,
-        content: content,
-        to,
-        from,
-        img,
+      content: content,
+      to,
+      from,
+      img,
     });
   },
 };

@@ -1,3 +1,3 @@
 export class SimpleModalState {
-    open = $state(false);
+  open = $state(false);
 }
