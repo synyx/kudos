@@ -25,19 +25,21 @@
 		{@render title?.()}
 	</div>
 	<div class="content h-4/5 p-2 flex flex-col">
-		<div class="to mb-2 flex-grow-0">
+		<div class="to mb-2 grow-0">
 			{@render to?.()}
 		</div>
-		<div class="w-full flex-grow">
+		<div class="w-full grow">
 			{@render content?.()}
 		</div>
-		<div class="from mt-2 flex-grow-0">
+		<div class="from mt-2 grow-0">
 			{@render from?.()}
 		</div>
 	</div>
 </div>
 
 <style lang="postcss">
+	@reference "tailwindcss";
+	
 	.kudo-card {
 		@apply border-solid;
 		@apply border-gray-900;

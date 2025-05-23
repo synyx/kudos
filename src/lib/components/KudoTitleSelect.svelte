@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import Icon from '@iconify/svelte';
 	import { kudoTitles, type KudoTitle } from '../utils/kudoTitles';
-	import { popup } from '@skeletonlabs/skeleton';
+	import SimpleTooltip from './SimpleTooltip.svelte';
+    import { preventDefault } from '$lib/utils/eventModifiers';
 
 	interface Props {
 		currentTitle?: KudoTitle;
@@ -31,31 +30,25 @@
 
 <svelte:window onclick={windowClickEventlistener} />
 
-<div
-	class="dropdown w-full"
-	use:popup={{
-		event: 'hover',
-		target: 'changeTitlePopup',
-		placement: 'top',
-	}}
->
-	<button bind:this={dropDownButton} class="dropbtn inline-flex w-full" onclick={preventDefault(() => (show = !show))}>
-		<div class="menu-icon pointer-events-none" class:show={show}>
-			<Icon icon="mdi:menu-down" />
-		</div>
-		{currentTitle.text}
-	</button>
-
-	<div class="card p-4 variant-filled-secondary text-base" data-popup="changeTitlePopup">
-		<p>Titel ändern</p>
-		<div class="arrow variant-filled-secondary"></div>
-	</div>
+<div class="dropdown w-full">
+	<SimpleTooltip text="Titel ändern">
+		<button
+			bind:this={dropDownButton}
+			class="dropbtn inline-flex w-full"
+			onclick={preventDefault(() => (show = !show))}
+		>
+			<div class="menu-icon pointer-events-none" class:show>
+				<Icon icon="mdi:menu-down" />
+			</div>
+			{currentTitle.text}
+		</button>
+	</SimpleTooltip>
 
 	<div bind:this={dropDownContent} class="dropdown-content rounded-md {showClass}">
 		{#each Object.entries(kudoTitles) as [__, kudoTitle]}
 			<button
 				style={`background-color: ${kudoTitle.color}`}
-				class="text-white block cursor-pointer overflow-hidden p-3"
+				class="block cursor-pointer overflow-hidden p-3 text-white"
 				onclick={preventDefault(() => kudoTitleSelected(kudoTitle))}
 			>
 				{kudoTitle.text}
@@ -65,6 +58,8 @@
 </div>
 
 <style lang="postcss">
+	@reference "tailwindcss";
+
 	.dropbtn:hover {
 		filter: brightness(85%);
 	}

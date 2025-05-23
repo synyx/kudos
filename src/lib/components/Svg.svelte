@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { getStroke } from 'perfect-freehand';
 	import type { StrokeOptionsWithColor, Strokes } from '$lib/utils/types';
     import { preventDefault } from '$lib/utils/eventModifiers';
@@ -29,13 +27,13 @@
 	const viewBoxWidth = 520;
 	const viewBoxHeight = 200;
 
-	export function clearShit() {
+	export function clear() {
 		points = [];
 			strokesHistory.unshift([]);
 			strokes = [];
 	}
 
-	export function undoShit() {
+	export function undo() {
 		strokeHistoryId = strokeHistoryId >= strokesHistory.length - 1 ? strokesHistory.length - 1 : strokeHistoryId + 1;
 			const undoStrokes = strokesHistory[strokeHistoryId];
 			if (undoStrokes) {
@@ -43,7 +41,7 @@
 			}
 	}
 
-	export function redoShit() {
+	export function redo() {
 		strokeHistoryId = strokeHistoryId > 0 ? strokeHistoryId - 1 : strokeHistoryId;
 			const redoStrokes = strokesHistory[strokeHistoryId];
 			if (redoStrokes) {
@@ -227,7 +225,8 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style>
+	
 	.canvas-wrapper {
 		width: 100%;
 		height: 100%;

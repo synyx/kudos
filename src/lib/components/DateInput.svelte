@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODO: refactor without legacy workarounds
 	import { run } from 'svelte/legacy';
 
 	interface Props {
