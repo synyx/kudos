@@ -114,7 +114,7 @@
     {/snippet}
   </BaseKudoCard>
   <div
-    class="flex flex-row items-end justify-between gap-2 rounded-md p-3 dark:text-white preset-filled-surface-200-800"
+    class="flex flex-row items-end justify-between gap-2 rounded-md p-3 dark:text-white bg-tertiary-200 dark:bg-surface-400"
   >
     <div class="flex h-full flex-row justify-center gap-5">
       <div class="flex flex-col items-center">
@@ -131,7 +131,7 @@
             <SimpleTooltip text="Rückgängig / Undo" shortcuts={['STRG + Z']} disabled={tooltipDisabled}>
               <div>
                 <button
-                  class="btn preset-filled-primary-100-900 grow w-full"
+                  class="btn preset-filled-primary-500 grow w-full"
                   id="undo"
                   onclick={preventDefault(() => svgElement.undo())}
                   disabled={!svgActive}><Icon icon="mdi:undo" /></button
@@ -145,7 +145,7 @@
             >
               <div>
                 <button
-                  class="btn preset-filled-primary-100-900 grow w-full"
+                  class="btn preset-filled-primary-500 grow w-full"
                   id="redo"
                   onclick={preventDefault(() => svgElement.redo())}
                   disabled={!svgActive}><Icon icon="mdi:redo" /></button
@@ -198,7 +198,7 @@
               disabled={tooltipDisabled}
             >
               <button
-                class="btn preset-filled-error-50-950 w-full"
+                class="btn bg-primary-300 w-full"
                 id="clear"
                 onclick={preventDefault(() => svgElement.clear())}
                 disabled={!svgActive}>Löschen</button
@@ -211,7 +211,7 @@
     <div class="flex w-1/4 items-center">
       <SimpleTooltip text="Kudo Karte erstellen" disabled={tooltipDisabled}>
         <button
-          class="btn btn-xl preset-filled-secondary-100-900 w-full p-3"
+          class="btn btn-xl preset-filled-secondary-500 w-full p-3"
           type="submit"
           use:confirmed={{
             // modalStore,

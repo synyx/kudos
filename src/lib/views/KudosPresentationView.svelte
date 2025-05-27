@@ -54,7 +54,7 @@
   <div class="flex h-full w-full flex-col justify-center">
     <div class="text-center">
       <button
-        class="btn btn-xl preset-filled-primary-100-900 shadow-secondary-500 shadow-md"
+        class="btn btn-lg preset-filled-primary-500 shadow-surface-500 shadow-md"
         onclick={() => (started = true)}>SHUFFLE & START!</button
       >
     </div>
@@ -78,7 +78,7 @@
         <div class="flex flex-col justify-center">
           <h1 class="mb-3 text-center text-3xl dark:text-white">Das war's</h1>
           <button
-            class="btn btn-xl preset-filled-secondary-100-900 shadow-primary-500 shadow-md"
+            class="btn btn-xl preset-filled-secondary-100-900 shadow-surface-500 shadow-md"
             use:confirmed={{
               title: 'Archivieren?',
               body: 'Möchtest du die gezeigten Kudos archivieren?',

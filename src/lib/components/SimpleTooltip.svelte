@@ -17,7 +17,7 @@
   } = $props();
 </script>
 
-<Tooltip classes="w-full" triggerClasses="w-full" {disabled} openDelay={500}>
+<Tooltip zIndex="10" classes="w-full" triggerClasses="w-full" {disabled} openDelay={500}>
   {#snippet trigger()}
     {@render children()}
   {/snippet}
@@ -26,7 +26,7 @@
       <p>{text}</p>
       {#if subText}
         <br />
-        <p class="text-surface-500 text-sm">{subText}</p>
+        <p class="text-surface-400 text-sm">{subText}</p>
       {/if}
       {#if shortcuts}
         <br />

@@ -91,14 +91,6 @@
 
 <div class="w-full flex flex-col h-full overflow-x-scroll" onwheel={preventDefault(onWheel)}>
   <div class="flex flex-row relative h-full items-center">
-    <button
-      class="kudo-scroll-button hidden md:flex dark:text-white absolute left-0 top-1/2 pl-2"
-      onclick={() => scrollTo(-1)}
-      disabled={disableLeftScrollButtonEffective}
-    >
-      <Icon font-size="42" icon="mdi:chevron-left" />
-    </button>
-
     <div
       class="kudo-card-container m-0 flex flex-row overflow-x-scroll snap-x snap-mandatory h-full items-center"
       bind:this={scrollContainer}
@@ -106,6 +98,14 @@
     >
       {@render children?.()}
     </div>
+
+    <button
+      class="kudo-scroll-button hidden md:flex dark:text-white absolute left-0 top-1/2 pl-2"
+      onclick={() => scrollTo(-1)}
+      disabled={disableLeftScrollButtonEffective}
+    >
+      <Icon font-size="42" icon="mdi:chevron-left" />
+    </button>
 
     <button
       class="kudo-scroll-button hidden md:flex dark:text-white absolute right-0 top-1/2 pr-2"

@@ -60,6 +60,7 @@
     <DateRangeInput bind:dateFrom bind:dateTo />
     <Switch checked={showArchived} onCheckedChange={(d) => (showArchived = d.checked)}>Archivierte anzeigen</Switch>
     <div class="grow"></div>
+    <a href="/new" type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
   </div>
   <div class="h-full w-full overflow-hidden">
     {#if kudosFiltered.length <= 0}
