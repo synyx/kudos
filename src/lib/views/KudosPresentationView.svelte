@@ -67,7 +67,7 @@
 		{#each shuffeledKudos as kudo (kudo.id)}
 			<div class="kudo-card-wrapper">
 				<div class="w-min justify-center scale-100 sm:scale-125 lg:scale-150">
-					<KudoCard animate={true} {kudo} />
+					<KudoCard animate={true} {kudo} hideDownloadButton/>
 				</div>
 			</div>
 		{/each}

@@ -59,6 +59,7 @@
     "@prisma/client": "^5.3.1",
     "debounce": "^2.0.0",
     "highlight.js": "11.8.0",
+    "html2canvas": "^1.4.1",
     "perfect-freehand": "^1.2.0",
     "svelte-local-storage-store": "^0.6.0"
   }
