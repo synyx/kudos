@@ -2,9 +2,10 @@
 	import type { KudoTitle } from '../utils/kudoTitles';
 
 	export let kudoTitle: KudoTitle;
+	export let kudoId;
 </script>
 
-<div class="kudo-card">
+<div class="kudo-card" id={"kudo-card-" + kudoId}>
 	<div class="title h-1/5" style="background-color: {kudoTitle.color};">
 		<slot name="title" />
 	</div>
