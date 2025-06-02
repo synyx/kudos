@@ -67,7 +67,7 @@
 />
 
 <div class="flex flex-col space-y-2">
-  <BaseKudoCard bind:kudoTitle>
+  <BaseKudoCard bind:kudoTitle kudoId="new">
     {#snippet title()}
       <KudoTitleSelect bind:currentTitle={kudoTitle} />
     {/snippet}
