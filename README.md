@@ -29,10 +29,12 @@ To get you up and running you need to run the following steps:
 1. Install [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) and install the required NodeJS version with `nvm install`
 2. Make sure you run the correct NodeJS version with `nvm use`
 3. Install dependencies with `npm install`
-4. Configure db connection with environment variable (eg. via `.env` file) `DATABASE_URL="postgres://kudos:secret@localhost:5432/kudos?schema=public"`
-5. Start db with `docker compose up`
-6. Run db migrations with `npm run db:migrate`
+4. Copy `.env.example` to `.env` and configure database connection: `DATABASE_URL="postgres://kudos:secret@localhost:5432/kudos"`
+5. Start database with `docker compose up -d`
+6. Run database migrations with `npm run db:migrate`
 7. Start local dev server with `npm run dev`
+
+The application will be available at `http://localhost:5173`
 
 ## Building
 
