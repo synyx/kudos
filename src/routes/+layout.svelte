@@ -97,7 +97,7 @@
   <!-- Footer -->
   <footer class="h-fit sticky bottom-0">
     <div class="block md:hidden">
-      <Navigation.Bar value={activeNavItem}>
+      <Navigation.Bar value={activeNavItem} background="bg-tertiary-600 dark:bg-surface-900">
         <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
           ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
         >
