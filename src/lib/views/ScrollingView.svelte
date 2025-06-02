@@ -89,7 +89,7 @@
   }}
 />
 
-<div class="w-full flex flex-col h-full overflow-x-scroll" onwheel={preventDefault(onWheel)}>
+<div class="w-full flex flex-col h-full overflow-x-hidden" onwheel={preventDefault((e) => onWheel(e as WheelEvent))}>
   <div class="flex flex-row relative h-full items-center">
     <div
       class="kudo-card-container m-0 flex flex-row overflow-x-scroll snap-x snap-mandatory h-full items-center"
