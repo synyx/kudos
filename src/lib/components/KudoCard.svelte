@@ -3,9 +3,9 @@
   import BaseKudoCard from './BaseKudoCard.svelte';
   import Svg from './Svg.svelte';
   import viewport from '../actions/useViewportAction';
-  import type { Kudo } from '@prisma/client';
   import Icon from '@iconify/svelte';
-  import html2canvas from 'html2canvas';
+  import type { Kudo } from '$lib/utils/types';
+  import { downloadElementAsImage } from '$lib/utils/elementToImage';
 
   interface Props {
     kudo: Kudo;
@@ -26,25 +26,22 @@
   async function downloadKudoCard() {
     const elementId = 'kudo-card-' + kudoId;
     const target = document.getElementById(elementId);
-    let originalOpacity = '';
-    let originalTransition = '';
+    const prevAnimate = _animate;
+    _animate = false;
+
     if (target) {
-      const downloadIcon = target.querySelector('.download-icon') as HTMLElement;
-      if (downloadIcon) {
-        downloadIcon.style.opacity = '0';
-        downloadIcon.style.transition = 'unset';
-        try {
-          const canvas = await html2canvas(target, {
-            logging: false,
-          });
-          const link = document.createElement('a');
-          link.download = `kudos-from-${kudo.from}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        } finally {
-          downloadIcon.style.opacity = originalOpacity;
-          downloadIcon.style.transition = originalTransition;
-        }
+      try {
+        await downloadElementAsImage(target, {
+          filename: `kudos-from-${kudo.from}.png`,
+          hideSelectors: ['.download-btn', '.download-icon'],
+          pixelRatio: 3,
+          cacheBust: true,
+          backgroundColor: 'white',
+        });
+      } catch (error) {
+        console.error('Failed to download kudo card:', error);
+      } finally {
+        _animate = prevAnimate;
       }
     }
   }
@@ -53,14 +50,16 @@
 <BaseKudoCard {kudoTitle} {kudoId}>
   <!-- TODO: fix this type error -->
   {#snippet title()}
-    <p use:viewport onenterViewport={() => (_animate = true)} onexitViewport={() => (_animate = false)}>
-      {kudoTitle.text}
+    <div class="flex justify-between">
+      <p use:viewport onenterViewport={() => (_animate = true)} onexitViewport={() => (_animate = false)}>
+        {kudoTitle.text}
+      </p>
       {#if !hideDownloadButton}
-        <button on:click={downloadKudoCard} class="download-btn">
+        <button onclick={downloadKudoCard} class="download-btn">
           <Icon class="download-icon" icon="mdi:download" />
         </button>
       {/if}
-    </p>
+    </div>
   {/snippet}
   {#snippet content()}
     <div class="relative overflow-hidden h-full">
