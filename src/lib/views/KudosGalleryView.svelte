@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Kudo } from '@prisma/client';
+  import type { Kudo } from '$lib/utils/types';
   import KudoCard from '../components/KudoCard.svelte';
 
   interface Props {
