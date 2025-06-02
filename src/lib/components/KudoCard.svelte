@@ -86,10 +86,6 @@
     -webkit-text-stroke: 0.3px white;
     text-stroke: 0.3px white;
   }
-  .kudo-title {
-    display: flex;
-    justify-content: space-between;
-  }
   :global(.download-icon) {
     opacity: 10%;
     transition: opacity 0.3s ease;

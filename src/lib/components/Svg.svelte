@@ -188,7 +188,7 @@
     onpointerup={handlePointerUp}
     ontouchend={preventDefault(handlePointerUp)}
     onpointermove={handlePointerMove}
-    ontouchmove={preventDefault(handlePointerMove)}
+    ontouchmove={preventDefault((e) => handlePointerMove(e as TouchEvent & { currentTarget: EventTarget & SVGSVGElement }))}
     style="touchAction: 'none'"
   >
     {#if animate}
