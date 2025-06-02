@@ -31,7 +31,7 @@ To get you up and running you need to run the following steps:
 3. Install dependencies with `npm install`
 4. Configure db connection with environment variable (eg. via `.env` file) `DATABASE_URL="postgres://kudos:secret@localhost:5432/kudos?schema=public"`
 5. Start db with `docker compose up`
-6. Run db migrations with `npm run prisma:migrate:dev`
+6. Run db migrations with `npm run db:migrate`
 7. Start local dev server with `npm run dev`
 
 ## Building
