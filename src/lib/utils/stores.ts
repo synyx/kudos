@@ -1,9 +1,10 @@
-import { persisted } from 'svelte-local-storage-store';
-import type { ViewMode } from './types';
+import { persisted } from 'svelte-persisted-store';
 
-export const viewMode = persisted<ViewMode>('viewMode', 'presentation');
-export const drawSettings = persisted('drawSettings', {
-  colorFill: '#000000',
-  colorFillOpacity: 1,
-  size: 16,
-});
+export const createViewModeStore = () => persisted('viewMode', 'presentation');
+
+export const createDrawSettingsStore = () =>
+  persisted('drawSettings', {
+    colorFill: '#000000',
+    colorFillOpacity: 1,
+    size: 16,
+  });

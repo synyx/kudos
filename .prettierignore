@@ -15,3 +15,5 @@ helm
 deploy
 *.yml
 *.yaml
+
+drizzle/meta/*

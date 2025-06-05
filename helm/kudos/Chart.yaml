@@ -3,7 +3,7 @@ name: kudos
 description: The Kudos Helm chart
 type: application
 version: 0.1.1
-appVersion: 1.1.2
+appVersion: 1.2.0
 dependencies:
   - name: postgresql
     repository: https://charts.bitnami.com/bitnami

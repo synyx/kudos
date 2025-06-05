@@ -1,141 +1,114 @@
 <script lang="ts">
-  initializeStores();
+  import '../app.css';
+  import { Navigation } from '@skeletonlabs/skeleton-svelte';
+  import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
 
-  import '../app.postcss';
-  import {
-    AppRail,
-    AppRailAnchor,
-    AppRailTile,
-    AppShell,
-    Drawer,
-    LightSwitch,
-    Modal,
-    Toast,
-    modeCurrent,
-    setModeCurrent,
-    storePopup,
-    initializeStores,
-    AppBar,
-    TabGroup,
-    TabAnchor,
-  } from '@skeletonlabs/skeleton';
   import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
-  import { viewMode } from '$lib/utils/stores';
+  import { createViewModeStore } from '$lib/utils/stores';
   import Icon from '@iconify/svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import Logo from '$lib/components/Logo.svelte';
+  import { AppBar } from '@skeletonlabs/skeleton-svelte';
+  import LightSwitch from '$lib/components/LightSwitch.svelte';
 
-  storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
+
+  const viewMode = createViewModeStore();
 
   function navigateHome() {
     goto('/');
   }
+
+  let activeNavItem = $derived.by(() => {
+    if (page.route.id === '/new') {
+      return 'create';
+    }
+
+    return $viewMode;
+  });
 </script>
 
-<Toast />
-<Modal />
-<Drawer />
+<div class="grid min-h-screen grid-rows-[1fr_auto]">
+  <!-- Grid Columns -->
+  <div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
+    <!-- Left Sidebar. -->
+    <aside class="hidden max-h-screen md:block sticky top-0">
+      <div class="hidden h-full justify-between md:flex md:flex-col">
+        <Navigation.Rail background="bg-tertiary-600 dark:bg-surface-900" value={activeNavItem}>
+          {#snippet tiles()}
+            <Navigation.Tile href="/">
+              <div class="w-16">
+                <Logo />
+              </div>
+            </Navigation.Tile>
 
-<AppShell>
-  <div slot="sidebarLeft" class="hidden md:block h-full">
-    <AppRail gap="gap-6">
-      <svelte:fragment slot="lead">
-        <AppRailAnchor href="/"><Logo/></AppRailAnchor>
-      </svelte:fragment>
+            <span class="grow"></span>
 
-      <AppRailAnchor href="/new" title="Kudo erstellen">
-        <Icon slot="lead" class="text-3xl" icon="mdi:plus-circle" />
-        Kudo erstellen
-      </AppRailAnchor>
+            <Navigation.Tile id="create" label="Kudo erstellen" labelClasses="text-center" href="/new"
+              ><Icon class="text-3xl" icon="mdi:plus-circle" /></Navigation.Tile
+            >
+            <hr class="my-4 w-full" />
 
-      <hr class="my-4" />
+            <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
+              ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
+            >
 
-      <AppRailTile bind:group={$viewMode} name="tile-single" value="single" title="Einzelmodus" on:click={navigateHome}>
-        <Icon slot="lead" class="text-3xl w-full" icon="mdi:view-array" />
-      </AppRailTile>
+            <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
+              ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+            >
 
-      <AppRailTile bind:group={$viewMode} name="tile-gallery" value="gallery" title="Galerie" on:click={navigateHome}>
-        <Icon slot="lead" class="text-3xl w-full" icon="mdi:view-module" />
-      </AppRailTile>
+            <Navigation.Tile
+              id="presentation"
+              label="Präsentation"
+              href="/"
+              onclick={() => ($viewMode = 'presentation')}
+              ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+            >
 
-      <AppRailTile
-        bind:group={$viewMode}
-        name="tile-presentation"
-        value="presentation"
-        title="Präsentationsmodus"
-        on:click={navigateHome}
-      >
-        <Icon slot="lead" class="text-3xl w-full" icon="mdi:presentation-play" />
-      </AppRailTile>
+            <span class="grow"></span>
+          {/snippet}
+        </Navigation.Rail>
 
-      <svelte:fragment slot="trail">
-        <AppRailTile
-          name="light-switch"
-          active="false"
-          on:click={() => {
-            setModeCurrent(!$modeCurrent);
-          }}
-          group="_"
-          value="0"
-          title="tile-3"
+        <div class="flex flex-col items-center justify-center gap-4 p-4 bg-tertiary-600 dark:bg-surface-900">
+          <LightSwitch />
+          <a
+            type="button"
+            class="btn btn-lg preset-filled"
+            href="https://github.com/synyx/kudos"
+            target="_blank"
+            onclick={() => ($viewMode = 'presentation')}
+          >
+            <Icon icon="mdi:github" />
+          </a>
+        </div>
+      </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="max-w-screen overflow-x-hidden">
+      {@render children?.()}
+    </main>
+  </div>
+  <!-- Footer -->
+  <footer class="h-fit sticky bottom-0">
+    <div class="block md:hidden">
+      <Navigation.Bar value={activeNavItem} background="bg-tertiary-600 dark:bg-surface-900">
+        <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
+          ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
         >
-          <div class="flex justify-center pointer-events-none">
-            <LightSwitch />
-          </div>
-        </AppRailTile>
 
-        <AppRailAnchor href="https://github.com/synyx/kudos" target="_blank" title="Source Code">
-          <Icon slot="lead" class="text-4xl" icon="mdi:github" />
-        </AppRailAnchor>
-      </svelte:fragment>
-    </AppRail>
-  </div>
+        <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
+          ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
+        >
 
-  <AppBar slot="pageHeader" slotTrail="place-content-end" class="block md:hidden">
-    <div slot="lead">
-      {#if $page.url.pathname !== '/'}
-        <a href="/" class="btn font-bold variant-soft-surface"><Icon icon="mdi:chevron-left"></Icon></a>
-      {/if}
+        <Navigation.Tile id="presentation" label="Präsentation" href="/" onclick={() => ($viewMode = 'presentation')}
+          ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
+        >
+      </Navigation.Bar>
     </div>
-    <a href="/"><Logo/></a>
-    <a slot="trail" href="/new" class="btn variant-filled-primary">Kudo erstellen</a>
-  </AppBar>
-
-  <slot />
-
-  <div slot="footer" class="block md:hidden">
-    {#if $page.url.pathname === '/'}
-      <TabGroup
-        justify="justify-center"
-        active="variant-filled-primary"
-        hover="hover:variant-soft-primary"
-        flex="flex-1 lg:flex-none"
-        rounded=""
-        border=""
-        class="bg-surface-100-800-token w-full"
-      >
-        <TabAnchor href="/" selected={$viewMode === 'single'} on:click={() => ($viewMode = 'single')}>
-          <svelte:fragment slot="lead"
-            ><Icon slot="lead" class="text-3xl w-full" icon="mdi:view-array" /></svelte:fragment
-          >
-          <span>Einzelmodus</span>
-        </TabAnchor>
-
-        <TabAnchor href="/" selected={$viewMode === 'gallery'} on:click={() => ($viewMode = 'gallery')}>
-          <svelte:fragment slot="lead"
-            ><Icon slot="lead" class="text-3xl w-full" icon="mdi:view-module" /></svelte:fragment
-          >
-          <span>Galerie</span>
-        </TabAnchor>
-
-        <TabAnchor href="/" selected={$viewMode === 'presentation'} on:click={() => ($viewMode = 'presentation')}>
-          <svelte:fragment slot="lead"
-            ><Icon slot="lead" class="text-3xl w-full" icon="mdi:presentation-play" /></svelte:fragment
-          >
-          <span>Präsentation</span>
-        </TabAnchor>
-      </TabGroup>
-    {/if}
-  </div>
-</AppShell>
+  </footer>
+</div>

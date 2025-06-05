@@ -1,113 +1,114 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
-	import { kudoTitles, type KudoTitle } from '../utils/kudoTitles';
-	import { popup } from '@skeletonlabs/skeleton';
+  import Icon from '@iconify/svelte';
+  import { kudoTitles, type KudoTitle } from '../utils/kudoTitles';
+  import SimpleTooltip from './SimpleTooltip.svelte';
+  import { preventDefault } from '$lib/utils/eventModifiers';
 
-	export let currentTitle: KudoTitle = kudoTitles.CONGRATS;
+  interface Props {
+    currentTitle?: KudoTitle;
+  }
 
-	let dropDownContent: Element;
-	let dropDownButton: Element;
+  let { currentTitle = $bindable(kudoTitles.CONGRATS) }: Props = $props();
 
-	let show = false;
-	$: showClass = show ? 'show' : '';
+  let dropDownContent: Element;
+  let dropDownButton: Element;
 
-	function windowClickEventlistener(event: MouseEvent) {
-		if (event.target && event.target !== dropDownButton) {
-			show = false;
-		}
-	}
+  let show = $state(false);
+  let showClass = $derived(show ? 'show' : '');
 
-	function kudoTitleSelected(kudoTitle: KudoTitle) {
-		show = false;
-		currentTitle = kudoTitle;
-	}
+  function windowClickEventlistener(event: MouseEvent) {
+    if (event.target && event.target !== dropDownButton) {
+      show = false;
+    }
+  }
+
+  function kudoTitleSelected(kudoTitle: KudoTitle) {
+    show = false;
+    currentTitle = kudoTitle;
+  }
 </script>
 
-<svelte:window on:click={windowClickEventlistener} />
+<svelte:window onclick={windowClickEventlistener} />
 
-<div
-	class="dropdown w-full"
-	use:popup={{
-		event: 'hover',
-		target: 'changeTitlePopup',
-		placement: 'top',
-	}}
->
-	<button bind:this={dropDownButton} class="dropbtn inline-flex w-full" on:click|preventDefault={() => (show = !show)}>
-		<div class="menu-icon pointer-events-none" class:show={show}>
-			<Icon icon="mdi:menu-down" />
-		</div>
-		{currentTitle.text}
-	</button>
+<div class="dropdown w-full">
+  <SimpleTooltip text="Titel ändern">
+    <button
+      bind:this={dropDownButton}
+      class="dropbtn inline-flex w-full"
+      onclick={preventDefault(() => (show = !show))}
+    >
+      <div class="menu-icon pointer-events-none" class:show>
+        <Icon icon="mdi:menu-down" />
+      </div>
+      {currentTitle.text}
+    </button>
+  </SimpleTooltip>
 
-	<div class="card p-4 variant-filled-secondary" data-popup="changeTitlePopup">
-		<p>Titel ändern</p>
-		<div class="arrow variant-filled-secondary" />
-	</div>
-
-	<div bind:this={dropDownContent} class="dropdown-content rounded-md {showClass}">
-		{#each Object.entries(kudoTitles) as [__, kudoTitle]}
-			<button
-				style={`background-color: ${kudoTitle.color}`}
-				class="text-white block cursor-pointer overflow-hidden p-3"
-				on:click|preventDefault={() => kudoTitleSelected(kudoTitle)}
-			>
-				{kudoTitle.text}
-			</button>
-		{/each}
-	</div>
+  <div bind:this={dropDownContent} class="dropdown-content rounded-md {showClass}">
+    {#each Object.entries(kudoTitles) as [__, kudoTitle]}
+      <button
+        style={`background-color: ${kudoTitle.color}`}
+        class="block cursor-pointer overflow-hidden p-3 text-white"
+        onclick={preventDefault(() => kudoTitleSelected(kudoTitle))}
+      >
+        {kudoTitle.text}
+      </button>
+    {/each}
+  </div>
 </div>
 
-<style lang="scss">
-	.dropbtn:hover {
-		filter: brightness(85%);
-	}
+<style lang="postcss">
+  @reference "tailwindcss";
 
-	.dropdown {
-		position: relative;
-		display: inline-block;
-	}
+  .dropbtn:hover {
+    filter: brightness(85%);
+  }
 
-	.dropdown-content {
-		display: none;
-		position: absolute;
-		background-color: #f1f1f1;
-		min-width: 200px;
-		overflow: auto;
-		box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-		z-index: 1;
-	}
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
 
-	.dropdown button:hover {
-		filter: brightness(120%);
-	}
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 200px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
 
-	.dropdown-content.show {
-		@apply flex;
-		@apply flex-col;
-		@apply gap-0.5;
-		@apply py-0.5;
-	}
+  .dropdown button:hover {
+    filter: brightness(120%);
+  }
 
-	@keyframes pulse {
-		from {
-			scale: 1;
-		}
-		to {
-			scale: 1.5;
-		}
-	}
+  .dropdown-content.show {
+    @apply flex;
+    @apply flex-col;
+    @apply gap-0.5;
+    @apply py-0.5;
+  }
 
-	.menu-icon {
-		animation-name: pulse;
-		animation-duration: 200ms;
-		animation-iteration-count: 10;
-		animation-direction: alternate;
-		animation-timing-function: ease-in-out;
-		transition: all 0.15s ease-in-out;
-	}
+  @keyframes pulse {
+    from {
+      scale: 1;
+    }
+    to {
+      scale: 1.5;
+    }
+  }
 
-	.menu-icon.show {
-		transform: scaleY(-1);
-	}
+  .menu-icon {
+    animation-name: pulse;
+    animation-duration: 200ms;
+    animation-iteration-count: 10;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .menu-icon.show {
+    transform: scaleY(-1);
+  }
 </style>

@@ -11,7 +11,7 @@ services:
     image: ghcr.io/synyx/kudos:main
   #  build: .
     environment:
-      DATABASE_URL: "postgresql://kudos:example@db:5432/kudos?schema=public"
+      DATABASE_URL: "postgresql://kudos:secret@db:5432/kudos"
       ORIGIN: "http://localhost:3000"
     ports:
       - "3000:3000"

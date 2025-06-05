@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Kudo" ALTER COLUMN "img" SET DATA TYPE TEXT;

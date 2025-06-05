@@ -1,21 +1,31 @@
 <script lang="ts">
-	export let date = new Date();
-	export let id = '';
+  // TODO: refactor without legacy workarounds
+  import { run } from 'svelte/legacy';
 
-	let dateString: string;
+  interface Props {
+    date?: any;
+    id?: string;
+  }
 
-	$: input(date);
-	$: output(dateString);
+  let { date = $bindable(new Date()), id = '' }: Props = $props();
 
-	function input(date: Date | undefined) {
-		if (date && !isNaN(date.getTime())) {
-			dateString = date.toISOString().split('T')[0];
-		}
-	}
+  let dateString: string = $state('');
 
-	function output(dateString: string) {
-		date = new Date(dateString);
-	}
+  function input(date: Date | undefined) {
+    if (date && !isNaN(date.getTime())) {
+      dateString = date.toISOString().split('T')[0];
+    }
+  }
+
+  function output(dateString: string) {
+    date = new Date(dateString);
+  }
+  run(() => {
+    input(date);
+  });
+  run(() => {
+    output(dateString);
+  });
 </script>
 
 <input class="input" {id} type="date" bind:value={dateString} />

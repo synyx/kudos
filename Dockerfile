@@ -1,28 +1,26 @@
-FROM node:18.16.0-slim AS build
+FROM node:22.3.0-slim AS build
 
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN ./_tools/patch-perfect-freehand.sh
 RUN apt-get update && apt-get install -y libssl-dev
-RUN npm run prisma:generate
-RUN npm run build
+RUN DOCKER_BUILDING=1 npm run db:generate
+RUN DOCKER_BUILDING=1 npm run build
 
 #######################################
 
-FROM node:18.16.0-alpine3.16
+FROM node:22.3.0-alpine3.19
 
 WORKDIR /app
 RUN rm -rf ./*
 
 COPY --from=build /app/package*.json ./
+COPY drizzle.config.ts .
+COPY drizzle .
+COPY src/lib/server/db src/lib/server/db
 RUN npm install
 
-COPY _tools/patch-perfect-freehand.sh ./_tools/patch-perfect-freehand.sh
-RUN sh ./_tools/patch-perfect-freehand.sh
-
-COPY --from=build /app/prisma ./prisma/
-RUN npm run prisma:generate
+RUN DOCKER_BUILDING=1 npm run db:generate
 
 COPY --from=build /app/build .
 CMD [ "node", "index.js" ]

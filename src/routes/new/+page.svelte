@@ -1,82 +1,81 @@
 <script lang="ts">
-	import EditableKudoCard from '$lib/components/EditableKudoCard.svelte';
-	import Icon from '@iconify/svelte';
-	import type { ActionData } from './$types';
-	import { enhance } from '$app/forms';
-	import { getToastStore } from '@skeletonlabs/skeleton';
-	import type { Strokes } from '$lib/utils/types';
+  import EditableKudoCard from '$lib/components/EditableKudoCard.svelte';
+  import Icon from '@iconify/svelte';
+  import type { ActionData } from './$types';
+  import { enhance } from '$app/forms';
+  import type { Strokes } from '$lib/utils/types';
+  import SimpleModal from '$lib/components/SimpleModal.svelte';
+  import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
 
-	const toastStore = getToastStore();
+  const toaster = createToaster();
 
-	export let form: ActionData;
-	let formElement: HTMLFormElement;
-	let undoSvg: () => void;
-	let redoSvg: () => void;
-	let svgActive = false;
+  interface Props {
+    form: ActionData;
+  }
 
-	let strokes: Strokes;
+  let { form }: Props = $props();
+  let formElement = $state<HTMLFormElement>();
+
+  let contentValue = $state(form?.content ?? '');
+  let toValue = $state(form?.to ?? '');
+  let fromValue = $state(form?.from ?? '');
+
+  let strokes = $state<Strokes>(JSON.parse(form?.img ?? '[]'));
+
+  $effect(() => {
+    if (form) {
+      form.content = contentValue;
+      form.to = toValue;
+      form.from = fromValue;
+    }
+  });
 </script>
 
-<svelte:window
-	on:keydown={(e) => {
-		if (!svgActive) {
-			return;
-		}
+<Toaster {toaster}></Toaster>
 
-		if (e.ctrlKey) {
-			if (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey)) {
-				redoSvg();
-			} else if (e.key.toLowerCase() === 'z') {
-				undoSvg();
-			}
-		}
-	}}
-/>
+<div class="flex h-full flex-col justify-center">
+  <div class="flex flex-grow flex-col items-center justify-center">
+    <h1 class="h1 mb-4">Neue Kudo Karte</h1>
+    <form
+      bind:this={formElement}
+      method="POST"
+      use:enhance={() => {
+        return async ({ result, update }) => {
+          await update({ reset: false });
 
-<div class="flex flex-col h-full justify-center">
-	<div class="flex flex-col flex-grow items-center justify-center">
-		<h1 class="h1 mb-4">Neue Kudo Karte</h1>
-		<form
-			bind:this={formElement}
-			method="POST"
-			use:enhance={() => {
-				return async ({ result, update }) => {
-					await update();
-
-					if (result.type === 'success') {
-						toastStore.trigger({
-							message: 'Kudo Karte erstellt 🌟',
-							background: 'variant-glass-success',
-						});
-						strokes = [];
-					} else {
-						toastStore.trigger({
-							message: 'Erstellen fehlgeschlagen :(',
-							background: 'variant-glass-error',
-						});
-					}
-				};
-			}}
-		>
-			{#if form?.error}
-				<aside class="alert variant-ghost-error mb-2">
-					<div class="alert-message">
-						<h3 class="h3 flex gap-1 items-center"><Icon icon="mdi:alert-circle-outline" /> Fehler</h3>
-						<p>{form?.error}</p>
-					</div>
-				</aside>
-			{/if}
-			<EditableKudoCard
-				bind:svgActive
-				bind:undoSvg
-				bind:redoSvg
-				initialKudoTitleId={form?.kudoTitleId ?? 'THANKS'}
-				initialContent={form?.content}
-				initialTo={form?.to}
-				initialFrom={form?.from}
-				initialStrokes={JSON.parse(form?.img ?? '[]')}
-				bind:strokes
-			/>
-		</form>
-	</div>
+          if (result.type === 'success') {
+            toaster.info({
+              title: 'Kudo Karte erstellt 🌟',
+            });
+            strokes = [];
+            contentValue = '';
+            toValue = '';
+          } else {
+            toaster.error({
+              title: 'Fehler',
+              description: 'Kudo Karte konnte nicht erstellt werden.',
+            });
+          }
+        };
+      }}
+    >
+      {#if form?.error}
+        <aside class="alert preset-ghost-error-100-900 mb-2">
+          <div class="alert-message">
+            <h3 class="h3 flex items-center gap-1">
+              <Icon icon="mdi:alert-circle-outline" /> Fehler
+            </h3>
+            <p>{form?.error}</p>
+          </div>
+        </aside>
+      {/if}
+      <EditableKudoCard
+        initialKudoTitleId={form?.kudoTitleId ?? 'THANKS'}
+        bind:contentValue
+        bind:toValue
+        bind:fromValue
+        bind:strokes
+      />
+    </form>
+  </div>
 </div>

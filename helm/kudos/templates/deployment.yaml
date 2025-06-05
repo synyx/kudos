@@ -31,7 +31,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           command: ["npm"]
-          args: ["run", "prisma:migrate:deploy"]
+          args: ["run", "db:migrate"]
           env:
             - name: DATABASE_USER
               value: {{ .Values.app.db.user | quote }}

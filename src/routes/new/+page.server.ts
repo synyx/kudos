@@ -1,9 +1,8 @@
 import type { KudoTitles } from '$lib/utils/kudoTitles';
-import { PrismaClient } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-
-const prisma = new PrismaClient();
+import { db } from '$lib/server/db';
+import { kudos } from '$lib/server/db/schema';
 
 export const actions: Actions = {
   default: async ({ request }) => {
@@ -32,14 +31,12 @@ export const actions: Actions = {
       return fail(400, { kudoTitleId, content, from, to, img, error: `invalid ${invalidData}` });
     }
 
-    await prisma.kudo.create({
-      data: {
-        kudoTitle: kudoTitleId,
-        content: content,
-        to,
-        from,
-        img,
-      },
+    await db.insert(kudos).values({
+      kudoTitle: kudoTitleId,
+      content: content,
+      to,
+      from,
+      img,
     });
   },
 };
