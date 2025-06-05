@@ -3,8 +3,11 @@ import postgres from 'postgres';
 import * as schema from './schema';
 import { env } from '$env/dynamic/private';
 
-if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+const dbUrl = env.DATABASE_URL;
+const isDockerBuild = env.DOCKER_BUILDING === '1';
 
-const client = postgres(env.DATABASE_URL);
+if (!dbUrl && !isDockerBuild) throw new Error('DATABASE_URL is not set');
+
+const client = postgres(dbUrl);
 
 export const db = drizzle(client, { schema });
