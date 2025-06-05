@@ -71,7 +71,6 @@
             >
 
             <span class="grow"></span>
-
           {/snippet}
         </Navigation.Rail>
 

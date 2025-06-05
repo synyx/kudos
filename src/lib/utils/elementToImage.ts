@@ -12,10 +12,7 @@ interface DomToImageOptions {
   cacheBust?: boolean;
 }
 
-export async function downloadElementAsImage(
-  element: HTMLElement,
-  options: DomToImageOptions = {}
-): Promise<void> {
+export async function downloadElementAsImage(element: HTMLElement, options: DomToImageOptions = {}): Promise<void> {
   const {
     filename = 'download.png',
     format = 'png',
@@ -25,19 +22,19 @@ export async function downloadElementAsImage(
     backgroundColor = 'white',
     hideSelectors = [],
     pixelRatio = 2,
-    cacheBust = true
+    cacheBust = true,
   } = options;
 
   // Store original styles for elements we need to hide
   const hiddenElements: { element: HTMLElement; originalDisplay: string }[] = [];
-  
+
   // Hide specified elements in the original element
   for (const selector of hideSelectors) {
     const elementsToHide = element.querySelectorAll(selector) as NodeListOf<HTMLElement>;
     for (const el of elementsToHide) {
       hiddenElements.push({
         element: el,
-        originalDisplay: el.style.display
+        originalDisplay: el.style.display,
       });
       el.style.display = 'none';
     }
@@ -54,10 +51,8 @@ export async function downloadElementAsImage(
       cacheBust,
       // Filter function to exclude hidden elements (extra safety)
       filter: (node: HTMLElement) => {
-        return !hideSelectors.some(selector => 
-          node.matches && node.matches(selector)
-        );
-      }
+        return !hideSelectors.some((selector) => node.matches && node.matches(selector));
+      },
     };
 
     let dataUrl: string;
@@ -92,7 +87,6 @@ export async function downloadElementAsImage(
     if (blob && format === 'blob') {
       URL.revokeObjectURL(dataUrl);
     }
-
   } catch (error) {
     console.error('Failed to generate image:', error);
     throw error;

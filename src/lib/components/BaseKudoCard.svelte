@@ -3,7 +3,7 @@
 
   interface Props {
     kudoTitle: KudoTitle;
-	kudoId: string;
+    kudoId: string;
     title?: import('svelte').Snippet;
     to?: import('svelte').Snippet;
     content?: import('svelte').Snippet;
@@ -13,7 +13,7 @@
   let { kudoTitle = $bindable(), kudoId, title, to, content, from }: Props = $props();
 </script>
 
-<div class="kudo-card" id={"kudo-card-" + kudoId}>
+<div class="kudo-card" id={'kudo-card-' + kudoId}>
   <div class="title h-1/5" style="background-color: {kudoTitle.color};">
     {@render title?.()}
   </div>

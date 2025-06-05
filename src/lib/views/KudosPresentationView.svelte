@@ -53,9 +53,8 @@
 {#if !started}
   <div class="flex h-full w-full flex-col justify-center">
     <div class="text-center">
-      <button
-        class="btn btn-lg preset-filled-primary-500 shadow-surface-500 shadow-md"
-        onclick={() => (started = true)}>SHUFFLE & START!</button
+      <button class="btn btn-lg preset-filled-primary-500 shadow-surface-500 shadow-md" onclick={() => (started = true)}
+        >SHUFFLE & START!</button
       >
     </div>
   </div>
@@ -69,7 +68,7 @@
     {#each shuffeledKudos as kudo (kudo.id)}
       <div class="kudo-card-wrapper">
         <div class="flex w-full scale-100 justify-center sm:scale-125 lg:scale-150">
-          <KudoCard animate={true} {kudo} hideDownloadButton/>
+          <KudoCard animate={true} {kudo} hideDownloadButton />
         </div>
       </div>
     {/each}
