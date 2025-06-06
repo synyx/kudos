@@ -14,7 +14,6 @@ app:
     port: 5432
     name: 'kudos'
     schema: 'public'
-    migrate: true # TODO: Job Container
 
 imagePullSecrets: []
 nameOverride: ''

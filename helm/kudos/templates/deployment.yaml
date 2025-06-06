@@ -87,6 +87,8 @@ spec:
               value: {{ .Values.app.db.schema | quote }}
             - name: DATABASE_URL
               value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)?schema=$(DATABASE_SCHEMA)"
+            - name: KUDOS_MIGRATION
+              value: "0"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

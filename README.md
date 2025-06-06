@@ -16,6 +16,8 @@ Transform your workplace culture by celebrating individual and team accomplishme
 
 🎨 **Drawing Functionality**: Unleash your creativity by drawing directly on the card for that extra personal touch.
 
+💾 **Download Cards**: Save individual Kudo cards as high-quality PNG images to share outside the application or keep as mementos.
+
 🎉 **Presentation Mode**:
 Planning to showcase the Kudos in a team meeting or special occasion? Switch to Presentation Mode, where you can shuffle through all received cards and celebrate together as a team.
 
@@ -45,3 +47,51 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Environment Variables
+
+The following environment variables can be configured:
+
+- `DATABASE_URL`: PostgreSQL connection string (required)
+- `ORIGIN`: The origin URL for the application (required for production)
+- `KUDOS_MIGRATE`: Set to `"1"` or `"true"` to run database migrations on startup (optional)
+
+Example:
+```bash
+DATABASE_URL="postgresql://kudos:secret@localhost:5432/kudos"
+ORIGIN="https://your-domain.com"
+KUDOS_MIGRATE="1"
+```
+
+## Deployment
+
+### Docker
+
+The application can be deployed using the provided Docker image:
+
+```bash
+docker run -e DATABASE_URL="your-db-url" -e ORIGIN="your-origin" -p 3000:3000 ghcr.io/synyx/kudos:main
+```
+
+### Docker Compose
+
+For a complete setup including the database, you can use Docker Compose. This will start both the PostgreSQL database and the Kudos application:
+
+```bash
+# Start the application and database
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop the services
+docker compose down
+```
+
+The application will be available at `http://localhost:3000`. The Docker Compose configuration automatically handles database migrations through the `KUDOS_MIGRATE` environment variable.
+
+### Helm Chart
+
+A Helm chart is available for Kubernetes deployment. The chart uses an init container to handle database migrations automatically, so the `KUDOS_MIGRATE` environment variable is not needed in the main application container.
+
+For Helm deployment, the migration process is handled separately from the main application container, ensuring reliable database setup before the application starts.
