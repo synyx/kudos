@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - 'main'
-    tags:
-      - 'v*'
     paths-ignore:
       - 'docs/helm/**'
+  create:
+    tags:
+      - 'v*'
 
 env:
   REGISTRY: ghcr.io
