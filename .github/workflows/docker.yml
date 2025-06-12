@@ -6,6 +6,8 @@ on:
       - 'main'
     tags:
       - 'v*'
+    paths-ignore:
+      - 'docs/helm/**'
 
 env:
   REGISTRY: ghcr.io
@@ -13,6 +15,7 @@ env:
 
 jobs:
   docker:
+    if: github.actor != vars.BOT_NAME
     runs-on: ubuntu-latest
 
     permissions:

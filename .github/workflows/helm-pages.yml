@@ -1,0 +1,40 @@
+name: helm-pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm/**'
+      - '.github/workflows/helm-pages.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish-helm:
+    if: github.actor != vars.BOT_NAME        # use vars, env is unavailable here
+    runs-on: ubuntu-latest
+    env:
+      BOT: ${{ vars.BOT_NAME }}             # makes $BOT usable in steps
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: azure/setup-helm@v3
+        with:
+          version: v3.14.4
+      - name: Package chart
+        run: |
+          mkdir -p docs/helm
+          helm package helm/kudos --destination docs/helm
+      - name: Re-index
+        run: helm repo index docs/helm --url https://synyx.github.io/docs/helm
+      - name: Commit and push
+        run: |
+          git config user.name  "$BOT"
+          git config user.email "$BOT@users.noreply.github.com"
+          git add docs/helm
+          git diff --quiet --cached && exit 0
+          git commit -m "chore(helm): update index [skip ci]"
+          git push
