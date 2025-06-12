@@ -13,10 +13,10 @@ permissions:
 
 jobs:
   publish-helm:
-    if: github.actor != vars.BOT_NAME        # use vars, env is unavailable here
+    if: github.actor != vars.BOT_NAME
     runs-on: ubuntu-latest
     env:
-      BOT: ${{ vars.BOT_NAME }}             # makes $BOT usable in steps
+      BOT: ${{ vars.BOT_NAME }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,7 +29,7 @@ jobs:
           mkdir -p docs/helm
           helm package helm/kudos --destination docs/helm
       - name: Re-index
-        run: helm repo index docs/helm --url https://synyx.github.io/docs/helm
+        run: helm repo index docs/helm --url https://synyx.github.io/kudos/docs/helm
       - name: Commit and push
         run: |
           git config user.name  "$BOT"
