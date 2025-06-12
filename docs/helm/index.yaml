@@ -3,17 +3,17 @@ entries:
   kudos:
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2025-06-12T11:05:49.90880219Z"
+    created: "2025-06-12T11:54:40.03618579Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
       repository: https://charts.bitnami.com/bitnami
       version: 12.1.2
     description: The Kudos Helm chart
-    digest: 3e9cdaafef6140641d9269701e86c71a70998e9c04aaab3222a7194b2f7078b5
+    digest: 7ecdba359b66ba8a6bebb691de877264c1636ff283b83bd432bd13d67de5e369
     name: kudos
     type: application
     urls:
-    - https://synyx.github.io/docs/helm/kudos-0.1.1.tgz
+    - https://synyx.github.io/kudos/docs/helm/kudos-0.1.1.tgz
     version: 0.1.1
-generated: "2025-06-12T11:05:49.905175853Z"
+generated: "2025-06-12T11:54:40.031060458Z"
