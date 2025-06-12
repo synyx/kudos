@@ -1,4 +1,4 @@
-CREATE TABLE "Kudo" (
+CREATE TABLE IF NOT EXISTS "Kudo" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"kudoTitle" varchar(20) DEFAULT 'WELL_DONE',
 	"createdAt" timestamp (6) DEFAULT now() NOT NULL,
