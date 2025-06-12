@@ -13,7 +13,6 @@ app:
     host: ''
     port: 5432
     name: 'kudos'
-    schema: 'public'
 
 imagePullSecrets: []
 nameOverride: ''

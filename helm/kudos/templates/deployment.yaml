@@ -46,10 +46,8 @@ spec:
               value: {{ .Values.app.db.port | quote }}
             - name: DATABASE_NAME
               value: {{ .Values.app.db.name | quote }}
-            - name: DATABASE_SCHEMA
-              value: {{ .Values.app.db.schema | quote }}
             - name: DATABASE_URL
-              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)?schema=$(DATABASE_SCHEMA)"
+              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
           resources:
             limits:
               cpu: 500m
@@ -83,10 +81,8 @@ spec:
               value: {{ .Values.app.db.port | quote }}
             - name: DATABASE_NAME
               value: {{ .Values.app.db.name | quote }}
-            - name: DATABASE_SCHEMA
-              value: {{ .Values.app.db.schema | quote }}
             - name: DATABASE_URL
-              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)?schema=$(DATABASE_SCHEMA)"
+              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
             - name: KUDOS_MIGRATION
               value: "0"
           resources:
