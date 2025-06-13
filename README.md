@@ -95,3 +95,19 @@ The application will be available at `http://localhost:3000`. The Docker Compose
 A Helm chart is available for Kubernetes deployment. The chart uses an init container to handle database migrations automatically, so the `KUDOS_MIGRATE` environment variable is not needed in the main application container.
 
 For Helm deployment, the migration process is handled separately from the main application container, ensuring reliable database setup before the application starts.
+
+#### Install via Helm
+```sh
+# add repo
+helm repo add synyx https://synyx.github.io/kudos/docs/helm
+helm repo update
+
+# inspect defaults
+helm show values synyx/kudos > values.yaml
+# edit as needed
+
+# install or upgrade
+helm upgrade --install kudos synyx/kudos \
+  --version <CHART VERSION> \
+  -f values.yaml
+```
