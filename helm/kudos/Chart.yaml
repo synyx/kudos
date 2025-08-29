@@ -1,11 +1,16 @@
 apiVersion: v2
 name: kudos
-description: The Kudos Helm chart
+description: The Kudos Helm chart - simplified PostgreSQL modes
 type: application
-version: 0.2.1
+version: 1.0.0
 appVersion: 1.2.1
-dependencies:
-  - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
-    version: 12.1.2
-    condition: postgresql.enabled
+
+keywords:
+  - postgresql
+  - kudos
+  - operator
+
+annotations:
+  category: Application
+  licenses: MIT
+

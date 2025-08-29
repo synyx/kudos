@@ -12,3 +12,4 @@ node_modules
 *secret.yaml
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+.DS_Store

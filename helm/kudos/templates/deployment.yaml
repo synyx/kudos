@@ -1,3 +1,4 @@
+{{- include "kudos.validate.postgresql" . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,20 +35,20 @@ spec:
           args: ["run", "db:migrate"]
           env:
             - name: DATABASE_USER
-              value: {{ .Values.app.db.user | quote }}
+              value: {{ include "kudos.postgresql.user.connection" . | quote }}
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.app.db.passwordSecret }}
-                  key: "password"
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.secretKey" . }}
             - name: DATABASE_HOST
-              value: {{ .Values.app.db.host | quote }}
+              value: {{ include "kudos.postgresql.host" . | quote }}
             - name: DATABASE_PORT
-              value: {{ .Values.app.db.port | quote }}
+              value: {{ include "kudos.postgresql.port" . | quote }}
             - name: DATABASE_NAME
-              value: {{ .Values.app.db.name | quote }}
+              value: {{ include "kudos.postgresql.database" . | quote }}
             - name: DATABASE_URL
-              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
+              value: {{ include "kudos.postgresql.connectionString" . | quote }}
           resources:
             limits:
               cpu: 500m
@@ -69,20 +70,20 @@ spec:
             - name: ORIGIN
               value: {{ .Values.app.origin | quote }}
             - name: DATABASE_USER
-              value: {{ .Values.app.db.user | quote }}
+              value: {{ include "kudos.postgresql.user.connection" . | quote }}
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.app.db.passwordSecret }}
-                  key: "password"
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.secretKey" . }}
             - name: DATABASE_HOST
-              value: {{ .Values.app.db.host | quote }}
+              value: {{ include "kudos.postgresql.host" . | quote }}
             - name: DATABASE_PORT
-              value: {{ .Values.app.db.port | quote }}
+              value: {{ include "kudos.postgresql.port" . | quote }}
             - name: DATABASE_NAME
-              value: {{ .Values.app.db.name | quote }}
+              value: {{ include "kudos.postgresql.database" . | quote }}
             - name: DATABASE_URL
-              value: "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
+              value: {{ include "kudos.postgresql.connectionString" . | quote }}
             - name: KUDOS_MIGRATION
               value: "0"
           resources:

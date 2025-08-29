@@ -1,0 +1,27 @@
+{{- if eq .Values.postgres.mode "operator" }}
+{{- include "kudos.validate.postgresql" . }}
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: {{ .Values.postgres.operator.clusterName }}
+  namespace: {{ .Values.postgres.operator.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "kudos.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  teamId: {{ .Values.postgres.operator.teamId | default "kudos" }}
+  volume:
+    size: {{ .Values.postgres.operator.storage.size }}
+  numberOfInstances: {{ .Values.postgres.operator.numberOfInstances | default 2 }}
+  users:
+    # database owner
+    {{ include "kudos.postgresql.user.sanitized" . }}: []
+  databases:
+    {{ .Values.app.db.name }}: {{ include "kudos.postgresql.user.sanitized" . }}
+  postgresql:
+    version: {{ .Values.postgres.version | quote }}
+  {{- if .Values.postgres.operator.resources }}
+  resources:
+    {{- toYaml .Values.postgres.operator.resources | nindent 4 }}
+  {{- end }}
+{{- end }}

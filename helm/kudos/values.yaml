@@ -1,18 +1,21 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/synyx/kudos:main
+  repository: ghcr.io/synyx/kudos
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: main
 
 app:
   origin: https://localhost
   db:
     user: 'kudos'
-    passwordSecret: 'secret-name'
+    passwordSecret: ''  # Auto-generated for selfcontained mode
     host: ''
     port: 5432
     name: 'kudos'
+    ssl:
+      mode: 'disable'  # disable, allow, prefer, require, verify-ca, verify-full
+      # For operator mode, 'require' is recommended due to Spilo's default SSL setup
 
 imagePullSecrets: []
 nameOverride: ''
@@ -60,5 +63,45 @@ tolerations: []
 
 affinity: {}
 
-postgresql:
-  enabled: true
+postgres:
+  # operator, selfcontained
+  mode: "selfcontained"
+  version: "15"
+
+  # For operator mode
+  operator:
+    clusterName: "kudos-postgres"
+    teamId: "kudos"
+    namespace: ""  # defaults to release namespace
+    numberOfInstances: 2
+    storage:
+      size: "10Gi"
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    ssl:
+      # Zalando operator (Spilo) requires SSL by default
+      mode: "require"  # disable, allow, prefer, require, verify-ca, verify-full
+
+  # For self-contained mode
+  selfcontained:
+    storage:
+      size: "10Gi"
+      storageClass: ""
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 999
+      runAsGroup: 999
+      readOnlyRootFilesystem: false

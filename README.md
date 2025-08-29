@@ -1,8 +1,8 @@
-<div align="center">
-    <img src="res/kudo-monster.svg">
-</div>
-
 # Kudos
+
+<div align="center">
+    <img width="150" src="res/kudo-monster.svg" alt="Kudo Monster">
+</div>
 
 👏 **Kudos** is a versatile and interactive web application, meticulously crafted to revolutionize the way you appreciate and celebrate your colleagues in the workplace. Kudos allows you not only to send tailor-made "Kudo" cards, but also to enhance them with your personal touch.
 
@@ -97,6 +97,7 @@ A Helm chart is available for Kubernetes deployment. The chart uses an init cont
 For Helm deployment, the migration process is handled separately from the main application container, ensuring reliable database setup before the application starts.
 
 #### Install via Helm
+
 ```sh
 # add repo
 helm repo add synyx https://synyx.github.io/kudos/docs/helm
@@ -111,3 +112,7 @@ helm upgrade --install kudos synyx/kudos \
   --version <CHART VERSION> \
   -f values.yaml
 ```
+
+#### Migrating from v0.x to v1.0.0
+
+**Important**: Kudos Helm Chart v1.0.0 introduces breaking changes. If you're upgrading from an earlier version, please follow the [Migration Guide](MIGRATION.md) for step-by-step instructions.
