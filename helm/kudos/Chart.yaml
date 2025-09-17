@@ -1,17 +1,15 @@
 apiVersion: v2
 name: kudos
-description: The Kudos Helm chart with multi-operator PostgreSQL support (CloudNative-PG, Zalando, Self-contained)
+description: Kudos Helm chart for deploying social recognition platform
 type: application
 version: 2.0.0
 appVersion: 1.2.1
 
 keywords:
-  - postgresql
   - kudos
-  - operator
-  - cloudnative-pg
-  - zalando
-  - database
+  - social
+  - recognition
+  - postgresql
   - kubernetes
 
 annotations:
