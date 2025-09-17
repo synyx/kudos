@@ -57,14 +57,8 @@ PostgreSQL Configuration Validation
 {{- if not .Values.postgresql.host }}
 {{- fail "postgresql.host is required - please specify your external PostgreSQL host" }}
 {{- end }}
-{{- if and .Values.postgresql.auth.createSecret .Values.postgresql.auth.existingSecret }}
-{{- fail "postgresql.auth.createSecret and postgresql.auth.existingSecret cannot both be set - choose one authentication method" }}
-{{- end }}
-{{- if and (not .Values.postgresql.auth.createSecret) (not .Values.postgresql.auth.existingSecret) }}
-{{- fail "Either postgresql.auth.createSecret must be true OR postgresql.auth.existingSecret must be provided" }}
-{{- end }}
-{{- if and .Values.postgresql.auth.createSecret (not .Values.postgresql.auth.password) }}
-{{- fail "postgresql.auth.password is required when postgresql.auth.createSecret is true" }}
+{{- if not .Values.postgresql.auth.existingSecret }}
+{{- fail "postgresql.auth.existingSecret is required - please specify a secret containing database credentials" }}
 {{- end }}
 {{- end }}
 
@@ -72,11 +66,7 @@ PostgreSQL Configuration Validation
 PostgreSQL secret name
 */}}
 {{- define "kudos.postgresql.secretName" -}}
-{{- if .Values.postgresql.auth.existingSecret }}
 {{- .Values.postgresql.auth.existingSecret }}
-{{- else }}
-{{- printf "%s-postgresql-credentials" (include "kudos.fullname" .) }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -106,16 +96,5 @@ Build DATABASE_URL from components
 {{- printf "%s?sslmode=%s" $baseUrl $sslMode }}
 {{- else }}
 {{- $baseUrl }}
-{{- end }}
-{{- end }}
-
-{{/*
-Check if we should create a secret
-*/}}
-{{- define "kudos.postgresql.shouldCreateSecret" -}}
-{{- if .Values.postgresql.auth.createSecret }}
-{{- print "true" }}
-{{- else }}
-{{- print "false" }}
 {{- end }}
 {{- end }}
