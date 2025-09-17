@@ -35,18 +35,21 @@ spec:
           args: ["run", "db:migrate"]
           env:
             - name: DATABASE_USER
-              value: {{ include "kudos.postgresql.user.connection" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.usernameKey" . }}
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "kudos.postgresql.secretName" . }}
-                  key: {{ include "kudos.postgresql.secretKey" . }}
+                  key: {{ include "kudos.postgresql.passwordKey" . }}
             - name: DATABASE_HOST
-              value: {{ include "kudos.postgresql.host" . | quote }}
+              value: {{ .Values.postgresql.host | quote }}
             - name: DATABASE_PORT
-              value: {{ include "kudos.postgresql.port" . | quote }}
+              value: {{ .Values.postgresql.port | default 5432 | quote }}
             - name: DATABASE_NAME
-              value: {{ include "kudos.postgresql.database" . | quote }}
+              value: {{ .Values.postgresql.database | default "kudos" | quote }}
             - name: DATABASE_URL
               value: {{ include "kudos.postgresql.connectionString" . | quote }}
           resources:
@@ -70,18 +73,21 @@ spec:
             - name: ORIGIN
               value: {{ .Values.app.origin | quote }}
             - name: DATABASE_USER
-              value: {{ include "kudos.postgresql.user.connection" . | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.usernameKey" . }}
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "kudos.postgresql.secretName" . }}
-                  key: {{ include "kudos.postgresql.secretKey" . }}
+                  key: {{ include "kudos.postgresql.passwordKey" . }}
             - name: DATABASE_HOST
-              value: {{ include "kudos.postgresql.host" . | quote }}
+              value: {{ .Values.postgresql.host | quote }}
             - name: DATABASE_PORT
-              value: {{ include "kudos.postgresql.port" . | quote }}
+              value: {{ .Values.postgresql.port | default 5432 | quote }}
             - name: DATABASE_NAME
-              value: {{ include "kudos.postgresql.database" . | quote }}
+              value: {{ .Values.postgresql.database | default "kudos" | quote }}
             - name: DATABASE_URL
               value: {{ include "kudos.postgresql.connectionString" . | quote }}
             - name: KUDOS_MIGRATION

@@ -65,6 +65,16 @@ KUDOS_MIGRATE="1"
 
 ## Deployment
 
+### Database Setup
+
+**Important**: Starting with Helm Chart v2.0.0, Kudos requires an external PostgreSQL database. The application no longer manages database infrastructure to follow KISS principles and production best practices.
+
+📖 **See [DATABASE_SETUP.md](DATABASE_SETUP.md)** for comprehensive instructions on setting up PostgreSQL for Kudos, including:
+- Cloud database services (AWS RDS, Google Cloud SQL, Azure Database)
+- Self-managed PostgreSQL with operators (CloudNative-PG, Zalando)
+- Security best practices and connection configuration
+- Migration guidance from embedded database setups
+
 ### Docker
 
 The application can be deployed using the provided Docker image:
@@ -92,9 +102,9 @@ The application will be available at `http://localhost:3000`. The Docker Compose
 
 ### Helm Chart
 
-A Helm chart is available for Kubernetes deployment. The chart uses an init container to handle database migrations automatically, so the `KUDOS_MIGRATE` environment variable is not needed in the main application container.
+A Helm chart is available for Kubernetes deployment. **You must set up an external PostgreSQL database before installing** (see [DATABASE_SETUP.md](DATABASE_SETUP.md)).
 
-For Helm deployment, the migration process is handled separately from the main application container, ensuring reliable database setup before the application starts.
+The chart uses an init container to handle database migrations automatically, so the `KUDOS_MIGRATE` environment variable is not needed in the main application container.
 
 #### Install via Helm
 
@@ -105,7 +115,7 @@ helm repo update
 
 # inspect defaults
 helm show values synyx/kudos > values.yaml
-# edit as needed
+# edit as needed - CONFIGURE POSTGRESQL CONNECTION
 
 # install or upgrade
 helm upgrade --install kudos synyx/kudos \
@@ -113,6 +123,6 @@ helm upgrade --install kudos synyx/kudos \
   -f values.yaml
 ```
 
-#### Migrating from v0.x to v1.0.0
+#### Migrating from v1.x to v2.0.0
 
-**Important**: Kudos Helm Chart v1.0.0 introduces breaking changes. If you're upgrading from an earlier version, please follow the [Migration Guide](MIGRATION.md) for step-by-step instructions.
+**Important**: Kudos Helm Chart v2.0.0 introduces breaking changes by removing database management. If you're upgrading from an earlier version, please follow the [Migration Guide](MIGRATION.md) for step-by-step instructions.

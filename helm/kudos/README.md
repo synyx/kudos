@@ -4,39 +4,70 @@ A Helm chart for deploying Kudos, a simple social recognition platform for teams
 
 ## Overview
 
-Kudos is a lightweight application that enables team members to give and receive recognition. This Helm chart supports three PostgreSQL deployment modes to fit different infrastructure needs.
+Kudos is a lightweight application that enables team members to give and receive recognition. This Helm chart follows KISS principles and focuses solely on the application deployment.
+
+**⚠️ External Database Required**: Starting with v2.0.0, this chart requires an external PostgreSQL database. The chart no longer manages database infrastructure to follow production best practices and maintain simplicity.
 
 ## Prerequisites
 
 - Kubernetes 1.19+
 - Helm 3.0+
-- One of the following (depending on chosen PostgreSQL mode):
-  - For `cnpg` mode: [CloudNativePG Operator](https://cloudnative-pg.io/)
-  - For `zalando` mode: [Zalando Postgres Operator](https://github.com/zalando/postgres-operator)
-  - For `selfcontained` mode: No additional requirements
+- **External PostgreSQL database** (see [DATABASE_SETUP.md](../../DATABASE_SETUP.md))
 
 ## Installation
 
-### Quick Start (Self-contained)
+### Quick Start
 
-```bash
-helm install kudos oci://ghcr.io/synyx/kudos-helm
+1. **Set up your PostgreSQL database** (see [DATABASE_SETUP.md](../../DATABASE_SETUP.md))
+
+2. **Create database credentials secret**:
+   ```bash
+   kubectl create secret generic kudos-db-credentials \
+     --from-literal=username=kudos \
+     --from-literal=password=YOUR_SECURE_PASSWORD
+   ```
+
+3. **Install the chart**:
+   ```bash
+   helm install kudos oci://ghcr.io/synyx/kudos-helm \
+     --set postgresql.host=your-database-host.com \
+     --set postgresql.auth.existingSecret=kudos-db-credentials
+   ```
+
+### Advanced Configuration
+
+Create a `values.yaml` file:
+
+```yaml
+# Application configuration
+app:
+  origin: https://kudos.yourcompany.com
+
+# External PostgreSQL configuration
+postgresql:
+  host: "your-database-host.com"
+  port: 5432
+  database: "kudos"
+  sslMode: "require"  # recommended for production
+  
+  auth:
+    existingSecret: "kudos-db-credentials"
+    usernameKey: "username"
+    passwordKey: "password"
+
+# Ingress configuration
+ingress:
+  enabled: true
+  hosts:
+    - host: kudos.yourcompany.com
+      paths:
+        - path: /
+          pathType: Prefix
 ```
 
-### With CloudNativePG
-
+Install with custom configuration:
 ```bash
-helm install kudos oci://ghcr.io/synyx/kudos-helm \
-  --set postgres.mode=cnpg \
-  --set postgres.cnpg.clusterName=my-kudos-db
-```
-
-### With Zalando Postgres Operator
-
-```bash
-helm install kudos oci://ghcr.io/synyx/kudos-helm \
-  --set postgres.mode=zalando \
-  --set postgres.zalando.teamId=my-team
+helm install kudos oci://ghcr.io/synyx/kudos-helm -f values.yaml
 ```
 
 ## Configuration
@@ -51,81 +82,40 @@ helm install kudos oci://ghcr.io/synyx/kudos-helm \
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `app.origin` | Public URL where app is accessible | `https://localhost` |
 
-### Common Database Configuration
+### PostgreSQL Configuration
 
-These settings are shared across all PostgreSQL deployment modes:
+**Required**: You must configure an external PostgreSQL database.
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `app.db.user` | Database username | `kudos` |
-| `app.db.host` | Database host (auto-configured for operator modes) | `""` |
-| `app.db.port` | Database port | `5432` |
-| `app.db.name` | Database name | `kudos` |
-| `app.db.ssl.mode` | SSL mode (`disable`, `require`, etc.) | `disable` |
+| Parameter | Description | Default | Required |
+|-----------|-------------|---------|----------|
+| `postgresql.host` | PostgreSQL server hostname | `""` | ✅ Yes |
+| `postgresql.port` | PostgreSQL server port | `5432` | No |
+| `postgresql.database` | Database name | `"kudos"` | No |
+| `postgresql.sslMode` | SSL connection mode | `"disable"` | No |
 
-### PostgreSQL Deployment Modes
+**SSL Mode Options**: `disable`, `allow`, `prefer`, `require`, `verify-ca`, `verify-full`
 
-#### 1. Self-contained Mode (`postgres.mode: "selfcontained"`)
+### Authentication Configuration
 
-Simple embedded PostgreSQL pod. Best for development and small deployments.
+Choose one of the following authentication methods:
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `postgres.selfcontained.storage.size` | Persistent volume size | `10Gi` |
-| `postgres.selfcontained.storage.storageClass` | Storage class name | `""` |
-| `postgres.selfcontained.resources.limits.memory` | Memory limit | `1Gi` |
-| `postgres.selfcontained.resources.limits.cpu` | CPU limit | `500m` |
-| `postgres.selfcontained.resources.requests.memory` | Memory request | `256Mi` |
-| `postgres.selfcontained.resources.requests.cpu` | CPU request | `100m` |
-
-**Secret Management**: The chart automatically generates a PostgreSQL secret for the database credentials. For advanced use cases, you can configure existing secrets:
+#### Option 1: Existing Secret (Recommended)
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `app.db.passwordSecret` | Name of existing secret containing the password (uses `password` key) | `""` |
-| `app.db.existingSecret.name` | Name of existing secret with custom key mapping | `""` |
-| `app.db.existingSecret.keys.username` | Key for username in existing secret | `"username"` |
-| `app.db.existingSecret.keys.password` | Key for password in existing secret | `"password"` |
+| `postgresql.auth.existingSecret` | Name of existing secret | `""` |
+| `postgresql.auth.usernameKey` | Key for username in secret | `"username"` |
+| `postgresql.auth.passwordKey` | Key for password in secret | `"password"` |
 
-#### 2. CloudNativePG Mode (`postgres.mode: "cnpg"`)
-
-Infrastructure-as-code PostgreSQL management. Best for production with full control.
+#### Option 2: Create Secret via Helm
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `postgres.cnpg.clusterName` | PostgreSQL cluster name | `kudos-postgres` |
-| `postgres.cnpg.instances` | Number of PostgreSQL instances | `1` |
-| `postgres.cnpg.volume.size` | Storage size per instance | `10Gi` |
-| `postgres.cnpg.volume.storageClass` | Storage class | `""` |
-| `postgres.cnpg.resources.limits.memory` | Memory limit per instance | `1Gi` |
-| `postgres.cnpg.resources.limits.cpu` | CPU limit per instance | `500m` |
-| `postgres.cnpg.resources.requests.memory` | Memory request per instance | `256Mi` |
-| `postgres.cnpg.resources.requests.cpu` | CPU request per instance | `100m` |
-| `postgres.cnpg.ssl.mode` | SSL connection mode | `require` |
+| `postgresql.auth.createSecret` | Create secret via Helm | `false` |
+| `postgresql.auth.username` | Username for new secret | `"kudos"` |
+| `postgresql.auth.password` | Password for new secret | `""` |
 
-**Secret Management**: The chart supports three approaches:
-1. **Auto-generated secrets** (default): When `app.db.passwordSecret` and `app.db.existingSecret.name` are empty, a secret is auto-generated
-2. **Legacy secret reference**: Set `app.db.passwordSecret` to reference an existing secret with a `password` key
-3. **Advanced existing secret**: Use `app.db.existingSecret` for full control over secret name and key mapping
-
-#### 3. Zalando Mode (`postgres.mode: "zalando"`)
-
-Fully managed PostgreSQL-as-a-Service. Best for production with minimal operational overhead.
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `postgres.zalando.clusterName` | PostgreSQL cluster name | `kudos-postgres` |
-| `postgres.zalando.teamId` | Team identifier for the cluster | `kudos` |
-| `postgres.zalando.namespace` | Namespace for the cluster (defaults to release namespace) | `""` |
-| `postgres.zalando.numberOfInstances` | Number of PostgreSQL instances | `2` |
-| `postgres.zalando.storage.size` | Storage size | `10Gi` |
-| `postgres.zalando.resources.limits.memory` | Memory limit per instance | `1Gi` |
-| `postgres.zalando.resources.limits.cpu` | CPU limit per instance | `500m` |
-| `postgres.zalando.resources.requests.memory` | Memory request per instance | `256Mi` |
-| `postgres.zalando.resources.requests.cpu` | CPU request per instance | `100m` |
-| `postgres.zalando.ssl.mode` | SSL connection mode | `require` |
-
-**Secret Management**: The Zalando operator automatically creates and manages secrets. The `app.db.passwordSecret` field is ignored.
+**Important**: You cannot use both methods simultaneously. The chart will fail with a validation error if both `existingSecret` and `createSecret` are configured.
 
 ### Service Configuration
 
@@ -141,7 +131,7 @@ Fully managed PostgreSQL-as-a-Service. Best for production with minimal operatio
 | `ingress.enabled` | Enable ingress | `false` |
 | `ingress.className` | Ingress class name | `""` |
 | `ingress.annotations` | Ingress annotations | `{}` |
-| `ingress.hosts` | Ingress hosts configuration (array of host objects with paths) | `[{host: localhost, paths: [{path: /, pathType: ImplementationSpecific}]}]` |
+| `ingress.hosts` | Ingress hosts configuration | See values.yaml |
 | `ingress.tls` | TLS configuration | `[]` |
 
 ### Resource Management
@@ -153,13 +143,136 @@ Fully managed PostgreSQL-as-a-Service. Best for production with minimal operatio
 | `resources.requests.cpu` | CPU request | `100m` |
 | `resources.requests.memory` | Memory request | `128Mi` |
 
+## Database Setup
+
+This chart requires an external PostgreSQL database. See [DATABASE_SETUP.md](../../DATABASE_SETUP.md) for comprehensive setup instructions including:
+
+- **Cloud Services**: AWS RDS, Google Cloud SQL, Azure Database for PostgreSQL
+- **Self-Managed**: Using PostgreSQL operators (CloudNative-PG, Zalando)
+- **Security**: SSL configuration, network security, credential management
+- **Migration**: Moving from embedded database setups
+
+## Migration from Previous Versions
+
+If you're upgrading from chart versions < 2.0.0, see [MIGRATION.md](../../MIGRATION.md) for step-by-step migration instructions.
+
+**Breaking Changes in v2.0.0**:
+- Database management removed
+- External PostgreSQL required
+- Configuration structure changed
+- No backward compatibility
+
+## Troubleshooting
+
+### Common Issues
+
+1. **"postgresql.host is required" error**:
+   - Set `postgresql.host` in your values
+
+2. **"Cannot create and use existing secret" error**:
+   - Don't set both `createSecret: true` and `existingSecret`
+
+3. **Database connection failures**:
+   - Verify database accessibility from cluster
+   - Check credentials in secret
+   - Verify SSL configuration
+
+4. **Migration container fails**:
+   - Check init container logs: `kubectl logs deployment/kudos -c migrate`
+   - Verify database permissions
+
+### Debug Commands
+
+```bash
+# Check pod status
+kubectl get pods -l app.kubernetes.io/name=kudos
+
+# Check application logs
+kubectl logs deployment/kudos
+
+# Check migration logs
+kubectl logs deployment/kudos -c migrate
+
+# Verify secret
+kubectl get secret kudos-db-credentials -o yaml
+
+# Test database connectivity
+kubectl run -it --rm debug --image=postgres:15 --restart=Never -- \
+  psql "postgresql://username:password@host:5432/kudos" -c "SELECT version();"
+```
+
+## Examples
+
+### Production Setup with RDS
+
+```yaml
+postgresql:
+  host: "kudos-prod.cluster-xxx.us-east-1.rds.amazonaws.com"
+  port: 5432
+  database: "kudos"
+  sslMode: "require"
+  auth:
+    existingSecret: "kudos-rds-credentials"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: kudos.company.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: kudos-tls
+      hosts:
+        - kudos.company.com
+```
+
+### Development Setup with In-Cluster PostgreSQL
+
+```yaml
+postgresql:
+  host: "postgres.database.svc.cluster.local"
+  port: 5432
+  database: "kudos"
+  sslMode: "disable"
+  auth:
+    createSecret: true
+    username: "kudos"
+    password: "dev-password"  # Use proper secrets in production!
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+```
+
+## Support
+
+- **Documentation**: [DATABASE_SETUP.md](../../DATABASE_SETUP.md)
+- **Migration**: [MIGRATION.md](../../MIGRATION.md)
+- **Issues**: [GitHub Issues](https://github.com/synyx/kudos/issues)
+- **Community**: Join our community discussions
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Test with all PostgreSQL modes
-5. Submit a pull request
+3. Test your changes thoroughly
+4. Submit a pull request
 
 ## License
 

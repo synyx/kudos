@@ -14,28 +14,26 @@ image:
 app:
   # Public URL where the application is accessible
   origin: https://localhost
+
+# External PostgreSQL database configuration
+postgresql:
+  # Database connection details
+  host: ""  # REQUIRED: PostgreSQL host (e.g., "postgres.database.svc.cluster.local" or external hostname)
+  port: 5432
+  database: "kudos"
+  sslMode: "disable"  # Options: disable, allow, prefer, require, verify-ca, verify-full
   
-  # Database connection settings
-  db:
-    user: 'kudos'
-    # Secret containing database password. Auto-generated when empty (selfcontained, cnpg). Ignored for zalando mode.
-    passwordSecret: ''
-    # Alternative: use existing secret with custom key mapping
-    existingSecret:
-      # Name of existing secret containing database credentials
-      name: ''
-      # Key mappings within the secret
-      keys:
-        username: 'username'  # Key containing the database username
-        password: 'password'  # Key containing the database password
-    # Database host. Auto-configured for operator modes
-    host: ''
-    port: 5432
-    name: 'kudos'
-    ssl:
-      # SSL connection mode: disable, allow, prefer, require, verify-ca, verify-full
-      mode: 'disable'
-      # For operator modes, 'require' is recommended due to default SSL setup
+  # Authentication configuration
+  auth:
+    # Existing secret containing database credentials
+    existingSecret: ""  # REQUIRED if createSecret is false
+    usernameKey: "username"  # Key in the secret containing the username
+    passwordKey: "password"  # Key in the secret containing the password
+    
+    # Create new secret with credentials (only if existingSecret is empty)
+    createSecret: false  # Set to true to create a new secret
+    username: "kudos"    # Username for new secret (only used if createSecret is true)
+    password: ""         # REQUIRED: Password for new secret (only used if createSecret is true)
 
 # Kubernetes deployment configuration
 imagePullSecrets: []
@@ -76,100 +74,3 @@ resources:
 nodeSelector: {}
 tolerations: []
 affinity: {}
-
-# PostgreSQL Configuration
-# Three deployment modes: selfcontained, zalando, cnpg
-postgres:
-  # Deployment mode: selfcontained (simple), zalando (operator), cnpg (operator)
-  mode: "selfcontained"
-  # PostgreSQL version
-  version: "15"
-
-  # Zalando Postgres Operator Configuration
-  # Fully managed PostgreSQL with automatic secret management
-  zalando:
-    clusterName: "kudos-postgres"
-    teamId: "kudos"
-    # Namespace for the cluster. Defaults to release namespace
-    namespace: ""
-    numberOfInstances: 2
-    storage:
-      size: "10Gi"
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "500m"
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-    ssl:
-      # Zalando operator (Spilo) requires SSL by default
-      mode: "require"
-    # Secret configuration for Zalando mode
-    # The operator automatically creates secrets, specify existing ones if needed
-    secret:
-      # Use existing secret instead of operator-generated one
-      existingSecret: ""
-      # Keys in the existing secret (if used)
-      keys:
-        username: "username"
-        password: "password"
-
-  # CloudNative-PG Operator Configuration  
-  # Infrastructure-as-code PostgreSQL management
-  cnpg:
-    clusterName: "kudos-postgres"
-    instances: 1
-    volume:
-      size: "10Gi"
-      # Storage class for persistent volumes
-      storageClass: ""
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "500m"
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-    ssl:
-      # SSL mode for CNPG clusters
-      mode: "require"
-    # Secret configuration for CNPG mode
-    secret:
-      # Use existing secret instead of auto-generated one
-      existingSecret: ""
-      # Keys in the existing secret (if used)
-      keys:
-        username: "username"
-        password: "password"
-
-  # Self-contained PostgreSQL Configuration
-  # Simple embedded PostgreSQL pod
-  selfcontained:
-    storage:
-      size: "10Gi"
-      storageClass: ""
-    resources:
-      limits:
-        memory: "1Gi"
-        cpu: "500m"
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-    securityContext:
-      allowPrivilegeEscalation: false
-      runAsNonRoot: true
-      runAsUser: 999
-      runAsGroup: 999
-      readOnlyRootFilesystem: false
-    # Secret configuration for selfcontained mode
-    secret:
-      # Create new secret with these credentials
-      username: "kudos"
-      password: "kudos"
-      # Or use existing secret instead
-      existingSecret: ""
-      # Keys in the existing secret (if used)
-      keys:
-        username: "username"
-        password: "password"

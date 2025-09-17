@@ -1,10 +1,8 @@
-{{- define "kudos.notes" -}}
-🎉 This release of Kudos has been deployed successfully!
+🎉 Kudos has been deployed successfully!
 
-To access your application, follow the instructions below:
+To access your application:
 
 {{- if .Values.ingress.enabled }}
-1. Get the application URL by running these commands:
 {{- if .Values.ingress.tls }}
   https://{{ (first .Values.ingress.hosts).host }}
 {{- else }}
@@ -16,7 +14,6 @@ To access your application, follow the instructions below:
   echo http://$NODE_IP:$NODE_PORT
 {{- else if contains "LoadBalancer" .Values.service.type }}
   NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-        You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "kudos.fullname" . }}'
   export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "kudos.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress) }}{{.ip}}{{ end }}"}}")
   echo http://$SERVICE_IP:{{ .Values.service.port }}
 {{- else if contains "ClusterIP" .Values.service.type }}
@@ -25,107 +22,30 @@ To access your application, follow the instructions below:
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:3000
 {{- end }}
 
-📊 PostgreSQL Configuration:
-Your application is configured to use PostgreSQL with mode: {{ .Values.postgres.mode }}
-
-{{- if eq .Values.postgres.mode "selfcontained" }}
-✅ A self-contained PostgreSQL instance was deployed.
-  Host: {{ template "kudos.postgresql.fullname" . }}
-  Database: {{ template "kudos.postgresql.database" . }}
-  User: {{ template "kudos.postgresql.user" . }}
-  Secret: {{ template "kudos.postgresql.secretName" . }}
-  Storage: {{ .Values.postgres.selfcontained.storage.size }}
-
-To connect to PostgreSQL:
-  kubectl exec -it -n {{ .Release.Namespace }} {{ template "kudos.postgresql.fullname" . }}-0 -- psql -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }}
+📊 Database Configuration:
+  Host: {{ .Values.postgresql.host }}
+  Port: {{ .Values.postgresql.port | default 5432 }}
+  Database: {{ .Values.postgresql.database | default "kudos" }}
+  SSL Mode: {{ .Values.postgresql.sslMode | default "disable" }}
+{{- if .Values.postgresql.auth.existingSecret }}
+  Authentication: Using existing secret '{{ .Values.postgresql.auth.existingSecret }}'
+{{- else }}
+  Authentication: Using generated secret '{{ include "kudos.postgresql.secretName" . }}'
 {{- end }}
 
-{{- if or (eq .Values.postgres.mode "operator") (eq .Values.postgres.mode "zalando") }}
-{{- $operatorConfig := .Values.postgres.operator -}}
-{{- if eq .Values.postgres.mode "zalando" -}}
-{{- $operatorConfig = .Values.postgres.zalando -}}
-{{- end }}
-🔗 The application is configured to connect to a PostgreSQL cluster managed by the Zalando Operator.
-Please ensure the following resources exist:
-  - A 'postgresql' custom resource named '{{ $operatorConfig.clusterName }}' in namespace '{{ default .Release.Namespace $operatorConfig.namespace }}'.
-  - A secret named '{{ template "kudos.postgresql.secretName" . }}' containing the key 'password'.
+⚠️  Database Management:
+Kudos no longer manages PostgreSQL infrastructure. You must:
+  1. Set up your own PostgreSQL database (see DATABASE_SETUP.md)
+  2. Ensure the database is accessible from your Kubernetes cluster
+  3. Configure credentials using the postgresql.auth settings
 
-  Connection details:
-    Host: {{ template "kudos.postgresql.host" . }}
-    Database: {{ template "kudos.postgresql.database" . }}
-    User: {{ template "kudos.postgresql.user" . }}
-    Instances: {{ $operatorConfig.numberOfInstances }}
-    Storage: {{ $operatorConfig.storage.size }}
-
-To check the cluster status:
-  kubectl get postgresql -n {{ default .Release.Namespace $operatorConfig.namespace }} {{ $operatorConfig.clusterName }}
-
-To connect to PostgreSQL:
-  kubectl exec -it -n {{ default .Release.Namespace $operatorConfig.namespace }} {{ $operatorConfig.clusterName }}-0 -- psql -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }}
-{{- end }}
-
-{{- if eq .Values.postgres.mode "cnpg" }}
-🔗 The application is configured to connect to a PostgreSQL cluster managed by CloudNative-PG.
-The following resources were created:
-  - A 'Cluster' custom resource named '{{ include "kudos.cnpg.clusterName" . }}' in namespace '{{ .Release.Namespace }}'.
-  - A secret named '{{ include "kudos.cnpg.secretName" . }}' containing the application user credentials.
-  {{- if .Values.postgres.cnpg.monitoring.podMonitor }}
-  - A 'PodMonitor' resource for Prometheus monitoring.
-  {{- end }}
-
-  Connection details:
-    Host: {{ template "kudos.postgresql.host" . }}
-    Database: {{ template "kudos.postgresql.database" . }}
-    User: {{ template "kudos.postgresql.user" . }}
-    Instances: {{ .Values.postgres.cnpg.cluster.instances }}
-    Storage: {{ .Values.postgres.cnpg.cluster.storage.size }}
-
-To check the cluster status:
-  kubectl get cluster -n {{ .Release.Namespace }} {{ include "kudos.cnpg.clusterName" . }}
-
-To view cluster details:
-  kubectl describe cluster -n {{ .Release.Namespace }} {{ include "kudos.cnpg.clusterName" . }}
-
-To connect to PostgreSQL (primary):
-  kubectl exec -it -n {{ .Release.Namespace }} {{ include "kudos.cnpg.clusterName" . }}-1 -- psql -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }}
-
-Services available:
-  - {{ include "kudos.cnpg.rwServiceName" . }} (read-write, primary)
-  - {{ include "kudos.cnpg.roServiceName" . }} (read-only, replicas)
-{{- end }}
-
-🔍 To monitor your deployment:
+🔍 Monitor your deployment:
   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
   kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} -f
 
-💾 For database backup/restore in Kubernetes:
-{{- if eq .Values.postgres.mode "selfcontained" }}
-  # Export database
-  kubectl exec -n {{ .Release.Namespace }} {{ template "kudos.postgresql.fullname" . }}-0 -- pg_dump -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }} -Fc > backup.dump
+💾 Database migration scripts are available in kudos-gitlab/scripts/
+  - db-export.sh: Export data from existing database
+  - db-import.sh: Import data to new database
 
-  # Import database  
-  kubectl exec -i -n {{ .Release.Namespace }} {{ template "kudos.postgresql.fullname" . }}-0 -- pg_restore -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }} --clean < backup.dump
-{{- end }}
-{{- if or (eq .Values.postgres.mode "operator") (eq .Values.postgres.mode "zalando") }}
-  Use the provided db-export.sh and db-import.sh scripts in the kudos-gitlab repository.
-{{- end }}
-{{- if eq .Values.postgres.mode "cnpg" }}
-  {{- if .Values.postgres.cnpg.backup.enabled }}
-  # CloudNative-PG supports automated backups to object storage.
-  # Check backup status:
-  kubectl get backup -n {{ .Release.Namespace }}
-  
-  # Create manual backup:
-  kubectl cnpg backup {{ include "kudos.cnpg.clusterName" . }} --namespace {{ .Release.Namespace }}
-  {{- else }}
-  # Manual backup using pg_dump:
-  kubectl exec -n {{ .Release.Namespace }} {{ include "kudos.cnpg.clusterName" . }}-1 -- pg_dump -U {{ template "kudos.postgresql.user" . }} -d {{ template "kudos.postgresql.database" . }} -Fc > backup.dump
-  
-  # For automated backups, enable postgres.cnpg.backup in values.yaml
-  {{- end }}
-  
-  # Use the provided db-export.sh and db-import.sh scripts for cross-cluster operations.
-{{- end }}
-
-{{- end -}}
+📖 Need help setting up a database? Check DATABASE_SETUP.md in the project root!
 
