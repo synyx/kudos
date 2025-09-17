@@ -109,7 +109,7 @@ spec:
           requests:
             storage: {{ .Values.postgres.selfcontained.storage.size }}
 ---
-{{- if not .Values.app.db.passwordSecret }}
+{{- if eq (include "kudos.postgresql.shouldCreateSecret" .) "true" }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -119,6 +119,7 @@ metadata:
     app.kubernetes.io/component: postgresql
 type: Opaque
 data:
-  {{ template "kudos.postgresql.secretKey" . }}: {{ randAlphaNum 40 | b64enc | quote }}
+  {{ template "kudos.postgresql.usernameKey" . }}: {{ .Values.postgres.selfcontained.secret.username | default "kudos" | b64enc | quote }}
+  {{ template "kudos.postgresql.passwordKey" . }}: {{ .Values.postgres.selfcontained.secret.password | default (randAlphaNum 40) | b64enc | quote }}
 {{- end }}
 {{- end }}

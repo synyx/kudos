@@ -66,13 +66,112 @@ PostgreSQL helpers
 Return the proper PostgreSQL secret name
 */}}
 {{- define "kudos.postgresql.secretName" -}}
-{{- if eq .Values.postgres.mode "zalando" -}}
-    {{- $sanitizedUser := include "kudos.postgresql.user" . | replace "_" "-" | lower -}}
-    {{- printf "%s.%s.credentials.postgresql.acid.zalan.do" $sanitizedUser .Values.postgres.zalando.clusterName -}}
+{{- if .Values.app.db.existingSecret.name -}}
+    {{- .Values.app.db.existingSecret.name -}}
+{{- else if eq .Values.postgres.mode "zalando" -}}
+    {{- if .Values.postgres.zalando.secret.existingSecret -}}
+        {{- .Values.postgres.zalando.secret.existingSecret -}}
+    {{- else -}}
+        {{- $sanitizedUser := include "kudos.postgresql.user" . | replace "_" "-" | lower -}}
+        {{- printf "%s.%s.credentials.postgresql.acid.zalan.do" $sanitizedUser .Values.postgres.zalando.clusterName -}}
+    {{- end -}}
 {{- else if eq .Values.postgres.mode "cnpg" -}}
-    {{- printf "%s-app" (include "kudos.cnpg.clusterName" .) -}}
+    {{- if .Values.postgres.cnpg.secret.existingSecret -}}
+        {{- .Values.postgres.cnpg.secret.existingSecret -}}
+    {{- else -}}
+        {{- printf "%s-app" (include "kudos.cnpg.clusterName" .) -}}
+    {{- end -}}
 {{- else -}}
-    {{- .Values.app.db.passwordSecret | default (printf "%s-postgresql" .Release.Name) -}}
+    {{- if .Values.postgres.selfcontained.secret.existingSecret -}}
+        {{- .Values.postgres.selfcontained.secret.existingSecret -}}
+    {{- else -}}
+        {{- .Values.app.db.passwordSecret | default (printf "%s-postgresql" .Release.Name) -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper PostgreSQL password secret key
+*/}}
+{{- define "kudos.postgresql.passwordKey" -}}
+{{- if .Values.app.db.existingSecret.name -}}
+    {{- .Values.app.db.existingSecret.keys.password -}}
+{{- else if eq .Values.postgres.mode "zalando" -}}
+    {{- if .Values.postgres.zalando.secret.existingSecret -}}
+        {{- .Values.postgres.zalando.secret.keys.password | default "password" -}}
+    {{- else -}}
+        {{- print "password" -}}
+    {{- end -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- if .Values.postgres.cnpg.secret.existingSecret -}}
+        {{- .Values.postgres.cnpg.secret.keys.password | default "password" -}}
+    {{- else -}}
+        {{- print "password" -}}
+    {{- end -}}
+{{- else -}}
+    {{- if .Values.postgres.selfcontained.secret.existingSecret -}}
+        {{- .Values.postgres.selfcontained.secret.keys.password | default "password" -}}
+    {{- else -}}
+        {{- print "password" -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper PostgreSQL username secret key
+*/}}
+{{- define "kudos.postgresql.usernameKey" -}}
+{{- if .Values.app.db.existingSecret.name -}}
+    {{- .Values.app.db.existingSecret.keys.username -}}
+{{- else if eq .Values.postgres.mode "zalando" -}}
+    {{- if .Values.postgres.zalando.secret.existingSecret -}}
+        {{- .Values.postgres.zalando.secret.keys.username | default "username" -}}
+    {{- else -}}
+        {{- print "username" -}}
+    {{- end -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- if .Values.postgres.cnpg.secret.existingSecret -}}
+        {{- .Values.postgres.cnpg.secret.keys.username | default "username" -}}
+    {{- else -}}
+        {{- print "username" -}}
+    {{- end -}}
+{{- else -}}
+    {{- if .Values.postgres.selfcontained.secret.existingSecret -}}
+        {{- .Values.postgres.selfcontained.secret.keys.username | default "username" -}}
+    {{- else -}}
+        {{- print "username" -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Check if we should create a secret (only if no existing secret is specified)
+*/}}
+{{- define "kudos.postgresql.shouldCreateSecret" -}}
+{{- if .Values.app.db.existingSecret.name -}}
+    {{- print "false" -}}
+{{- else if eq .Values.postgres.mode "zalando" -}}
+    {{- if .Values.postgres.zalando.secret.existingSecret -}}
+        {{- print "false" -}}
+    {{- else -}}
+        {{- print "false" -}}
+    {{- end -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- if .Values.postgres.cnpg.secret.existingSecret -}}
+        {{- print "false" -}}
+    {{- else -}}
+        {{- print "false" -}}
+    {{- end -}}
+{{- else if eq .Values.postgres.mode "selfcontained" -}}
+    {{- if .Values.postgres.selfcontained.secret.existingSecret -}}
+        {{- print "false" -}}
+    {{- else -}}
+        {{- print "true" -}}
+    {{- end -}}
+{{- else if .Values.app.db.passwordSecret -}}
+    {{- print "false" -}}
+{{- else -}}
+    {{- print "true" -}}
 {{- end -}}
 {{- end -}}
 
@@ -166,7 +265,13 @@ Return the proper PostgreSQL port
 Return the proper PostgreSQL User
 */}}
 {{- define "kudos.postgresql.user" -}}
-{{- .Values.app.db.user | default "kudos" -}}
+{{- if .Values.app.db.user -}}
+    {{- .Values.app.db.user -}}
+{{- else if eq .Values.postgres.mode "selfcontained" -}}
+    {{- .Values.postgres.selfcontained.secret.username | default "kudos" -}}
+{{- else -}}
+    {{- print "kudos" -}}
+{{- end -}}
 {{- end -}}
 
 {{/*

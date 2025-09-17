@@ -27,9 +27,10 @@ spec:
       database: {{ include "kudos.postgresql.database" . }}
       owner: {{ include "kudos.postgresql.user" . }}
       secret:
-        name: {{ include "kudos.cnpg.secretName" . }}
+        name: {{ include "kudos.postgresql.secretName" . }}
 
 ---
+{{- if eq (include "kudos.postgresql.shouldCreateSecret" .) "true" }}
 # Create a secret for the application user
 apiVersion: v1
 kind: Secret
@@ -43,4 +44,5 @@ type: kubernetes.io/basic-auth
 data:
   username: {{ include "kudos.postgresql.user" . | b64enc }}
   password: {{ randAlphaNum 32 | b64enc }}
+{{- end }}
 {{- end }}

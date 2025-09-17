@@ -1,36 +1,57 @@
+# Kudos Application Configuration
+# Simple, social recognition platform for teams
+
+# Application deployment settings
 replicaCount: 1
 
+# Container image configuration
 image:
   repository: ghcr.io/synyx/kudos
   pullPolicy: IfNotPresent
   tag: main
 
+# Application-specific configuration
 app:
+  # Public URL where the application is accessible
   origin: https://localhost
+  
+  # Database connection settings
   db:
     user: 'kudos'
-    passwordSecret: ''  # Auto-generated for selfcontained mode
+    # Secret containing database password. Auto-generated when empty (selfcontained, cnpg). Ignored for zalando mode.
+    passwordSecret: ''
+    # Alternative: use existing secret with custom key mapping
+    existingSecret:
+      # Name of existing secret containing database credentials
+      name: ''
+      # Key mappings within the secret
+      keys:
+        username: 'username'  # Key containing the database username
+        password: 'password'  # Key containing the database password
+    # Database host. Auto-configured for operator modes
     host: ''
     port: 5432
     name: 'kudos'
     ssl:
-      mode: 'disable'  # disable, allow, prefer, require, verify-ca, verify-full
-      # For operator mode, 'require' is recommended due to Spilo's default SSL setup
+      # SSL connection mode: disable, allow, prefer, require, verify-ca, verify-full
+      mode: 'disable'
+      # For operator modes, 'require' is recommended due to default SSL setup
 
+# Kubernetes deployment configuration
 imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: ''
 
 podAnnotations: {}
-
 podSecurityContext: {}
-
 securityContext: {}
 
+# Service configuration
 service:
   type: ClusterIP
   port: 80
 
+# Ingress configuration
 ingress:
   enabled: false
   className: ''
@@ -42,6 +63,7 @@ ingress:
           pathType: ImplementationSpecific
   tls: []
 
+# Resource limits and requests
 resources:
   limits:
     cpu: 500m
@@ -50,29 +72,26 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
+# Pod placement configuration
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
 
+# PostgreSQL Configuration
+# Three deployment modes: selfcontained, zalando, cnpg
 postgres:
-  # selfcontained, zalando, cnpg
+  # Deployment mode: selfcontained (simple), zalando (operator), cnpg (operator)
   mode: "selfcontained"
+  # PostgreSQL version
   version: "15"
 
-  # For Zalando operator mode
+  # Zalando Postgres Operator Configuration
+  # Fully managed PostgreSQL with automatic secret management
   zalando:
     clusterName: "kudos-postgres"
     teamId: "kudos"
-    namespace: ""  # defaults to release namespace
+    # Namespace for the cluster. Defaults to release namespace
+    namespace: ""
     numberOfInstances: 2
     storage:
       size: "10Gi"
@@ -85,14 +104,25 @@ postgres:
         cpu: "100m"
     ssl:
       # Zalando operator (Spilo) requires SSL by default
-      mode: "require"  # disable, allow, prefer, require, verify-ca, verify-full
+      mode: "require"
+    # Secret configuration for Zalando mode
+    # The operator automatically creates secrets, specify existing ones if needed
+    secret:
+      # Use existing secret instead of operator-generated one
+      existingSecret: ""
+      # Keys in the existing secret (if used)
+      keys:
+        username: "username"
+        password: "password"
 
-  # For CloudNative-PG operator mode
+  # CloudNative-PG Operator Configuration  
+  # Infrastructure-as-code PostgreSQL management
   cnpg:
     clusterName: "kudos-postgres"
     instances: 1
     volume:
       size: "10Gi"
+      # Storage class for persistent volumes
       storageClass: ""
     resources:
       limits:
@@ -101,12 +131,20 @@ postgres:
       requests:
         memory: "256Mi"
         cpu: "100m"
-    
-    # SSL configuration
     ssl:
-      mode: "require"  # disable, allow, prefer, require, verify-ca, verify-full
+      # SSL mode for CNPG clusters
+      mode: "require"
+    # Secret configuration for CNPG mode
+    secret:
+      # Use existing secret instead of auto-generated one
+      existingSecret: ""
+      # Keys in the existing secret (if used)
+      keys:
+        username: "username"
+        password: "password"
 
-  # For self-contained mode
+  # Self-contained PostgreSQL Configuration
+  # Simple embedded PostgreSQL pod
   selfcontained:
     storage:
       size: "10Gi"
@@ -124,3 +162,14 @@ postgres:
       runAsUser: 999
       runAsGroup: 999
       readOnlyRootFilesystem: false
+    # Secret configuration for selfcontained mode
+    secret:
+      # Create new secret with these credentials
+      username: "kudos"
+      password: "kudos"
+      # Or use existing secret instead
+      existingSecret: ""
+      # Keys in the existing secret (if used)
+      keys:
+        username: "username"
+        password: "password"
