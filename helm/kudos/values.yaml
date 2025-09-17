@@ -26,14 +26,9 @@ postgresql:
   # Authentication configuration
   auth:
     # Existing secret containing database credentials
-    existingSecret: ""  # REQUIRED if createSecret is false
+    existingSecret: ""  # REQUIRED: Name of secret containing database credentials
     usernameKey: "username"  # Key in the secret containing the username
     passwordKey: "password"  # Key in the secret containing the password
-    
-    # Create new secret with credentials (only if existingSecret is empty)
-    createSecret: false  # Set to true to create a new secret
-    username: "kudos"    # Username for new secret (only used if createSecret is true)
-    password: ""         # REQUIRED: Password for new secret (only used if createSecret is true)
 
 # Kubernetes deployment configuration
 imagePullSecrets: []
