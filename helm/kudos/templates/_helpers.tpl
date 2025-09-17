@@ -66,9 +66,11 @@ PostgreSQL helpers
 Return the proper PostgreSQL secret name
 */}}
 {{- define "kudos.postgresql.secretName" -}}
-{{- if eq .Values.postgres.mode "operator" -}}
+{{- if eq .Values.postgres.mode "zalando" -}}
     {{- $sanitizedUser := include "kudos.postgresql.user" . | replace "_" "-" | lower -}}
-    {{- printf "%s.%s.credentials.postgresql.acid.zalan.do" $sanitizedUser .Values.postgres.operator.clusterName -}}
+    {{- printf "%s.%s.credentials.postgresql.acid.zalan.do" $sanitizedUser .Values.postgres.zalando.clusterName -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- printf "%s-app" (include "kudos.cnpg.clusterName" .) -}}
 {{- else -}}
     {{- .Values.app.db.passwordSecret | default (printf "%s-postgresql" .Release.Name) -}}
 {{- end -}}
@@ -85,7 +87,7 @@ Return the proper PostgreSQL User (sanitized for Kubernetes)
 Return the proper PostgreSQL User for connection (matches what's actually created)
 */}}
 {{- define "kudos.postgresql.user.connection" -}}
-{{- if eq .Values.postgres.mode "operator" -}}
+{{- if eq .Values.postgres.mode "zalando" -}}
     {{- include "kudos.postgresql.user.sanitized" . -}}
 {{- else -}}
     {{- include "kudos.postgresql.user" . -}}
@@ -96,8 +98,10 @@ Return the proper PostgreSQL User for connection (matches what's actually create
 Return the proper PostgreSQL SSL mode
 */}}
 {{- define "kudos.postgresql.sslmode" -}}
-{{- if eq .Values.postgres.mode "operator" -}}
-    {{- .Values.postgres.operator.ssl.mode | default "require" -}}
+{{- if eq .Values.postgres.mode "zalando" -}}
+    {{- .Values.postgres.zalando.ssl.mode | default "require" -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- .Values.postgres.cnpg.ssl.mode | default "require" -}}
 {{- else -}}
     {{- .Values.app.db.ssl.mode | default "disable" -}}
 {{- end -}}
@@ -111,7 +115,7 @@ Build the complete DATABASE_URL with conditional SSL mode
 {{- $port := include "kudos.postgresql.port" . -}}
 {{- $database := include "kudos.postgresql.database" . -}}
 {{- $baseUrl := printf "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@%s:%s/%s" $host $port $database -}}
-{{- if eq .Values.postgres.mode "operator" -}}
+{{- if or (eq .Values.postgres.mode "zalando") (eq .Values.postgres.mode "cnpg") -}}
 {{- $sslmode := include "kudos.postgresql.sslmode" . -}}
 {{- if ne $sslmode "disable" -}}
 {{- printf "%s?sslmode=%s" $baseUrl $sslmode -}}
@@ -127,7 +131,9 @@ Build the complete DATABASE_URL with conditional SSL mode
 Return the proper PostgreSQL secret key
 */}}
 {{- define "kudos.postgresql.secretKey" -}}
-{{- if eq .Values.postgres.mode "operator" -}}
+{{- if eq .Values.postgres.mode "zalando" -}}
+{{- print "password" -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
 {{- print "password" -}}
 {{- else -}}
 {{- print "postgres-password" -}}
@@ -138,8 +144,10 @@ Return the proper PostgreSQL secret key
 Return the proper PostgreSQL host
 */}}
 {{- define "kudos.postgresql.host" -}}
-{{- if eq .Values.postgres.mode "operator" -}}
-    {{- printf "%s.%s.svc.cluster.local" .Values.postgres.operator.clusterName (default .Release.Namespace .Values.postgres.operator.namespace) -}}
+{{- if eq .Values.postgres.mode "zalando" -}}
+    {{- printf "%s.%s.svc.cluster.local" .Values.postgres.zalando.clusterName (default .Release.Namespace .Values.postgres.zalando.namespace) -}}
+{{- else if eq .Values.postgres.mode "cnpg" -}}
+    {{- printf "%s-rw.%s.svc.cluster.local" (include "kudos.cnpg.clusterName" .) .Release.Namespace -}}
 {{- else if eq .Values.postgres.mode "selfcontained" -}}
     {{- template "kudos.postgresql.fullname" . -}}
 {{- else if .Values.app.db.host }}
@@ -172,16 +180,21 @@ Return the proper PostgreSQL Database
 Validate postgresql configuration.
 */}}
 {{- define "kudos.validate.postgresql" -}}
-{{- $validModes := list "operator" "selfcontained" }}
+{{- $validModes := list "zalando" "cnpg" "selfcontained" }}
 {{- if not (has .Values.postgres.mode $validModes) }}
 {{- fail (printf "Invalid postgres.mode '%s'. Must be one of: %s" .Values.postgres.mode (join ", " $validModes)) }}
 {{- end }}
-{{- if eq .Values.postgres.mode "operator" }}
-{{- if not .Values.postgres.operator.clusterName }}
-{{- fail "postgres.operator.clusterName is required when postgres.mode is 'operator'" }}
+{{- if eq .Values.postgres.mode "zalando" }}
+{{- if not .Values.postgres.zalando.clusterName }}
+{{- fail "postgres.zalando.clusterName is required when postgres.mode is 'zalando'" }}
 {{- end }}
-{{- if not .Values.postgres.operator.teamId }}
-{{- fail "postgres.operator.teamId is required when postgres.mode is 'operator'" }}
+{{- if not .Values.postgres.zalando.teamId }}
+{{- fail "postgres.zalando.teamId is required when postgres.mode is 'zalando'" }}
+{{- end }}
+{{- end }}
+{{- if eq .Values.postgres.mode "cnpg" }}
+{{- if not .Values.postgres.cnpg.clusterName }}
+{{- fail "postgres.cnpg.clusterName is required when postgres.mode is 'cnpg'" }}
 {{- end }}
 {{- end }}
 {{- if eq .Values.postgres.mode "selfcontained" }}
@@ -189,4 +202,22 @@ Validate postgresql configuration.
 {{- fail "postgres.selfcontained.storage.size is required when postgres.mode is 'selfcontained'" }}
 {{- end }}
 {{- end }}
+{{- end -}}
+
+{{/*
+CloudNative-PG helpers
+*/}}
+
+{{/*
+Return the CloudNative-PG cluster name
+*/}}
+{{- define "kudos.cnpg.clusterName" -}}
+{{- .Values.postgres.cnpg.clusterName | default (printf "%s-postgres" (include "kudos.fullname" .)) -}}
+{{- end -}}
+
+{{/*
+CloudNative-PG secret name for application user
+*/}}
+{{- define "kudos.cnpg.secretName" -}}
+{{- printf "%s-app" (include "kudos.cnpg.clusterName" .) -}}
 {{- end -}}

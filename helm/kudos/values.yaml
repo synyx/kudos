@@ -64,12 +64,12 @@ tolerations: []
 affinity: {}
 
 postgres:
-  # operator, selfcontained
+  # selfcontained, zalando, cnpg
   mode: "selfcontained"
   version: "15"
 
-  # For operator mode
-  operator:
+  # For Zalando operator mode
+  zalando:
     clusterName: "kudos-postgres"
     teamId: "kudos"
     namespace: ""  # defaults to release namespace
@@ -85,6 +85,25 @@ postgres:
         cpu: "100m"
     ssl:
       # Zalando operator (Spilo) requires SSL by default
+      mode: "require"  # disable, allow, prefer, require, verify-ca, verify-full
+
+  # For CloudNative-PG operator mode
+  cnpg:
+    clusterName: "kudos-postgres"
+    instances: 1
+    volume:
+      size: "10Gi"
+      storageClass: ""
+    resources:
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    
+    # SSL configuration
+    ssl:
       mode: "require"  # disable, allow, prefer, require, verify-ca, verify-full
 
   # For self-contained mode
