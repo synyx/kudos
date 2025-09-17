@@ -97,9 +97,7 @@ helm install kudos oci://ghcr.io/synyx/kudos-helm -f values.yaml
 
 ### Authentication Configuration
 
-Choose one of the following authentication methods:
-
-#### Option 1: Existing Secret (Recommended)
+Database credentials must be provided via an external Kubernetes secret:
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
@@ -107,15 +105,7 @@ Choose one of the following authentication methods:
 | `postgresql.auth.usernameKey` | Key for username in secret | `"username"` |
 | `postgresql.auth.passwordKey` | Key for password in secret | `"password"` |
 
-#### Option 2: Create Secret via Helm
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `postgresql.auth.createSecret` | Create secret via Helm | `false` |
-| `postgresql.auth.username` | Username for new secret | `"kudos"` |
-| `postgresql.auth.password` | Password for new secret | `""` |
-
-**Important**: You cannot use both methods simultaneously. The chart will fail with a validation error if both `existingSecret` and `createSecret` are configured.
+**Important**: You must create and manage the database credentials secret externally before installing the chart.
 
 ### Service Configuration
 
@@ -131,7 +121,7 @@ Choose one of the following authentication methods:
 | `ingress.enabled` | Enable ingress | `false` |
 | `ingress.className` | Ingress class name | `""` |
 | `ingress.annotations` | Ingress annotations | `{}` |
-| `ingress.hosts` | Ingress hosts configuration | See values.yaml |
+| `ingress.hosts` | Ingress hosts configuration | [See values.yaml](values.yaml) |
 | `ingress.tls` | TLS configuration | `[]` |
 
 ### Resource Management
