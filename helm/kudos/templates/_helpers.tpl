@@ -84,11 +84,11 @@ PostgreSQL password secret key
 {{- end }}
 
 {{/*
-Build DATABASE_URL from components
+Build DATABASE_URL with environment variable substitution
 */}}
 {{- define "kudos.postgresql.connectionString" -}}
 {{- $host := .Values.postgresql.host }}
-{{- $port := .Values.postgresql.port | default 5432 }}
+{{- $port := .Values.postgresql.port | default 5432 | int }}
 {{- $database := .Values.postgresql.database | default "kudos" }}
 {{- $sslMode := .Values.postgresql.sslMode | default "disable" }}
 {{- $baseUrl := printf "postgresql://$(DATABASE_USER):$(DATABASE_PASSWORD)@%s:%d/%s" $host $port $database }}

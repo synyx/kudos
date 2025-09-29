@@ -67,7 +67,7 @@ KUDOS_MIGRATE="1"
 
 ### Database Setup
 
-**Important**: Starting with Helm Chart v2.0.0, Kudos requires an external PostgreSQL database. The application no longer manages database infrastructure to follow KISS principles and production best practices.
+**Important**: Starting with Helm Chart v2.0.0, Kudos requires an external PostgreSQL database. The application no longer manages database infrastructure.
 
 📖 **See [DATABASE_SETUP.md](DATABASE_SETUP.md)** for comprehensive instructions on setting up PostgreSQL for Kudos, including:
 - Cloud database services (AWS RDS, Google Cloud SQL, Azure Database)

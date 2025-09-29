@@ -9,14 +9,6 @@ This guide helps you migrate from previous versions of the Kudos Helm chart to v
 - **Configuration structure changed**: Database connection settings are completely different
 - **No backward compatibility**: Complete migration required
 
-## Why This Change?
-
-This change follows the **KISS principle** (Keep It Simple, Stupid):
-- **Separation of concerns**: Database administration is distinct from application deployment  
-- **Production ready**: External databases offer better reliability, backup, and scaling
-- **Flexibility**: Choose your preferred database hosting solution
-- **Reduced complexity**: Kudos focuses on the application, not database operations
-
 ## Pre-Migration Requirements
 
 1. **Set up an external PostgreSQL database** (see [DATABASE_SETUP.md](../DATABASE_SETUP.md))

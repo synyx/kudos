@@ -18,7 +18,10 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "helm:release": "echo 'Packaging Helm chart...' && helm package helm/kudos -d docs/helm/ && echo 'Updating repository index...' && helm repo index docs/helm/ --url https://synyx.github.io/kudos/docs/helm && echo 'Helm release complete! 🎉'",
+    "helm:lint": "helm lint helm/kudos",
+    "helm:template": "helm template test-release helm/kudos --values helm/kudos/values.yaml"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",

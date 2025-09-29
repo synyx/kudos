@@ -6,9 +6,7 @@ metadata:
   labels:
     {{- include "kudos.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "kudos.selectorLabels" . | nindent 6 }}
@@ -34,6 +32,16 @@ spec:
           command: ["npm"]
           args: ["run", "db:migrate"]
           env:
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.usernameKey" . }}
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.passwordKey" . }}
             - name: DATABASE_URL
               value: {{ include "kudos.postgresql.connectionString" . | quote }}
           resources:
@@ -56,6 +64,16 @@ spec:
           env:
             - name: ORIGIN
               value: {{ .Values.app.origin | quote }}
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.usernameKey" . }}
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kudos.postgresql.secretName" . }}
+                  key: {{ include "kudos.postgresql.passwordKey" . }}
             - name: DATABASE_URL
               value: {{ include "kudos.postgresql.connectionString" . | quote }}
             - name: KUDOS_MIGRATION
