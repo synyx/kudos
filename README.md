@@ -30,11 +30,11 @@ To get you up and running you need to run the following steps:
 
 1. Install [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) and install the required NodeJS version with `nvm install`
 2. Make sure you run the correct NodeJS version with `nvm use`
-3. Install dependencies with `npm install`
+3. Install dependencies with `pnpm install`
 4. Copy `.env.example` to `.env` and configure database connection: `DATABASE_URL="postgres://kudos:secret@localhost:5432/kudos"`
 5. Start database with `docker compose up -d`
-6. Run database migrations with `npm run db:migrate`
-7. Start local dev server with `npm run dev`
+6. Run database migrations with `pnpm run db:migrate`
+7. Start local dev server with `pnpm run dev`
 
 The application will be available at `http://localhost:5173`
 
@@ -43,10 +43,10 @@ The application will be available at `http://localhost:5173`
 To create a production version of your app:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
-You can preview the production build with `npm run preview`.
+You can preview the production build with `pnpm run preview`.
 
 ## Environment Variables
 
@@ -126,3 +126,60 @@ helm upgrade --install kudos synyx/kudos \
 #### Migrating from v1.x to v2.0.0
 
 **Important**: Kudos Helm Chart v2.0.0 introduces breaking changes by removing database management. If you're upgrading from an earlier version, please follow the [Migration Guide](MIGRATION.md) for step-by-step instructions.
+
+## Releasing
+
+### Creating a New Release
+
+To create a new release, follow these steps:
+
+1. **Update version numbers:**
+   - Update `version` in `package.json` (e.g., `1.2.1` → `1.3.0`)
+   - Update `appVersion` in `helm/kudos/Chart.yaml` to match the package.json version
+   - If the Helm chart itself has changes, also update `version` in `helm/kudos/Chart.yaml` (e.g., `2.0.0` → `2.1.0`)
+
+2. **Commit the version changes:**
+   ```bash
+   git add package.json helm/kudos/Chart.yaml
+   git commit -m "chore: bump version to v1.3.0"
+   git push origin main
+   ```
+
+3. **Create and push a git tag:**
+   ```bash
+   git tag v1.3.0
+   git push origin v1.3.0
+   ```
+
+### What Happens Automatically
+
+Once you push the tag, GitHub Actions will automatically:
+
+- **Docker Image**: Build and publish multi-architecture (amd64/arm64) Docker images to GitHub Container Registry:
+  - `ghcr.io/synyx/kudos:v1.3.0` (versioned tag)
+  - `ghcr.io/synyx/kudos:main` (also updated from main branch pushes)
+
+- **Helm Chart**: When changes are pushed to the `helm/` directory, the chart is automatically packaged and published to GitHub Pages:
+  - Packaged chart: `docs/helm/kudos-2.1.0.tgz`
+  - Repository index: `docs/helm/index.yaml`
+
+### GitHub Release
+
+After the automated builds complete, manually create a GitHub Release:
+
+1. Go to the repository's [Releases page](https://github.com/synyx/kudos/releases)
+2. Click "Create a new release"
+3. Select the tag you just created (e.g., `v1.3.0`)
+4. Add release notes describing changes, new features, and bug fixes
+5. Publish the release
+
+### Version Strategy
+
+- **Application version** (`package.json` and `Chart.yaml` `appVersion`): Follow [Semantic Versioning](https://semver.org/)
+  - MAJOR: Breaking changes
+  - MINOR: New features (backward compatible)
+  - PATCH: Bug fixes (backward compatible)
+
+- **Helm chart version** (`Chart.yaml` `version`): Increment when chart configuration changes
+  - Update even if only app version changes
+  - Use separate versioning from application version
