@@ -6,6 +6,7 @@
   import { createViewModeStore } from '$lib/utils/stores';
   import type { PageData } from './$types';
   import { Switch } from '@skeletonlabs/skeleton-svelte';
+  import Icon from '@iconify/svelte';
 
   interface Props {
     data: PageData;
@@ -32,11 +33,25 @@
   });
 
   let showArchived = $state(false);
+  let searchQuery = $state('');
 
   let kudosFiltered = $derived(
-    kudosAll.filter(
-      (kudo) => kudo.createdAt >= dateFrom && kudo.createdAt <= dateTimeTo() && (!kudo.archived || showArchived),
-    ),
+    kudosAll.filter((kudo) => {
+      const matchesDateRange = kudo.createdAt >= dateFrom && kudo.createdAt <= dateTimeTo();
+      const matchesArchived = !kudo.archived || showArchived;
+
+      if (!searchQuery.trim()) {
+        return matchesDateRange && matchesArchived;
+      }
+
+      const query = searchQuery.toLowerCase();
+      const matchesSearch =
+        kudo.from.toLowerCase().includes(query) ||
+        kudo.to.toLowerCase().includes(query) ||
+        kudo.content.toLowerCase().includes(query);
+
+      return matchesDateRange && matchesArchived && matchesSearch;
+    }),
   );
 
   const viewMode = createViewModeStore();
@@ -58,6 +73,17 @@
 <div class="flex h-full flex-col">
   <div class="mb-2 flex flex-col items-center gap-4 p-3 md:flex-row">
     <DateRangeInput bind:dateFrom bind:dateTo />
+    <div class="relative w-full md:w-64">
+      <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+        <Icon icon="material-symbols:search" class="text-surface-500 text-xl" />
+      </div>
+      <input
+        type="text"
+        placeholder="Suche..."
+        bind:value={searchQuery}
+        class="input pl-10 pr-4 py-2 w-full"
+      />
+    </div>
     <Switch checked={showArchived} onCheckedChange={(d) => (showArchived = d.checked)}>Archivierte anzeigen</Switch>
     <div class="grow"></div>
     <a href="/new" type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
