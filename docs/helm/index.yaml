@@ -5,10 +5,10 @@ entries:
       category: Application
       licenses: MIT
     apiVersion: v2
-    appVersion: 1.2.1
-    created: "2025-09-29T09:46:27.367352386Z"
+    appVersion: 1.3.0
+    created: "2025-11-21T21:01:24.898865655Z"
     description: Kudos Helm chart for deploying social recognition platform
-    digest: fa579d4c2351587be8ef5884a6b1f26d1f12c647d14e6d0eef054746d61ea193
+    digest: 90b4b58342abd5a0e597cf17defe452b634b6c51d655c892c3ff2d162442f618
     keywords:
     - kudos
     - social
@@ -25,7 +25,7 @@ entries:
       licenses: MIT
     apiVersion: v2
     appVersion: 1.2.1
-    created: "2025-09-29T09:46:27.36649789Z"
+    created: "2025-11-21T21:01:24.898015814Z"
     description: The Kudos Helm chart - simplified PostgreSQL modes
     digest: 3e7262251dfaab534d9b3da9fb4c704d2d894caabe6511299fa86be08f282065
     keywords:
@@ -39,7 +39,7 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 1.2.1
-    created: "2025-09-29T09:46:27.366008059Z"
+    created: "2025-11-21T21:01:24.897525275Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -54,7 +54,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2025-09-29T09:46:27.362615702Z"
+    created: "2025-11-21T21:01:24.894167689Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -69,7 +69,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2025-09-29T09:46:27.358449115Z"
+    created: "2025-11-21T21:01:24.889869303Z"
     dependencies:
     - condition: postgresql.enabled
       name: postgresql
@@ -82,4 +82,4 @@ entries:
     urls:
     - https://synyx.github.io/kudos/docs/helm/kudos-0.1.1.tgz
     version: 0.1.1
-generated: "2025-09-29T09:46:27.35479164Z"
+generated: "2025-11-21T21:01:24.885976635Z"
