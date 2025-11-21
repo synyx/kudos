@@ -3,7 +3,7 @@ name: kudos
 description: Kudos Helm chart for deploying social recognition platform
 type: application
 version: 2.0.0
-appVersion: 1.2.1
+appVersion: 1.3.0
 
 keywords:
   - kudos
