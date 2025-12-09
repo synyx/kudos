@@ -29,14 +29,14 @@
             modalState.open = false;
             onCancel?.();
           }}
-          class="btn btn-md preset-filled-surface-50-950">Close</button
+          class="btn btn-md preset-filled-surface-50-950">Abbrechen</button
         >
         <button
           onclick={() => {
             modalState.open = false;
             onConfirm?.();
           }}
-          class="btn btn-md preset-filled-primary-400-600">Confirm</button
+          class="btn btn-md preset-filled-primary-400-600">Erstellen</button
         >
       </div>
     </div>
