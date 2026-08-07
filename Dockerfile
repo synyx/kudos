@@ -1,4 +1,4 @@
-FROM node:22.3.0-slim AS build
+FROM node:26.5.1-slim AS build
 
 WORKDIR /app
 COPY . .
@@ -9,7 +9,7 @@ RUN DOCKER_BUILDING=1 npm run build
 
 #######################################
 
-FROM node:22.3.0-alpine3.19
+FROM node:23.3.0-alpine3.19
 
 WORKDIR /app
 RUN rm -rf ./*
