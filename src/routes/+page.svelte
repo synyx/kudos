@@ -4,15 +4,11 @@
   import KudosGalleryView from '$lib/views/KudosGalleryView.svelte';
   import KudosPresentationView from '$lib/views/KudosPresentationView.svelte';
   import { createViewModeStore } from '$lib/utils/stores';
-  import type { PageData } from './$types';
+  import type { PageProps } from './$types';
   import { Switch } from '@skeletonlabs/skeleton-svelte';
   import Icon from '@iconify/svelte';
 
-  interface Props {
-    data: PageData;
-  }
-
-  let { data }: Props = $props();
+  let { data }: PageProps = $props();
   let kudosAll = $derived(data.kudos);
 
   const lastMonth = new Date();
