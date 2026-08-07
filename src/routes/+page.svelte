@@ -7,11 +7,13 @@
   import type { PageProps } from './$types';
   import { Switch } from '@skeletonlabs/skeleton-svelte';
   import Icon from '@iconify/svelte';
+  import { SvelteDate } from 'svelte/reactivity';
+  import { resolve } from '$app/paths';
 
   let { data }: PageProps = $props();
   let kudosAll = $derived(data.kudos);
 
-  const lastMonth = new Date();
+  const lastMonth = new SvelteDate();
   lastMonth.setDate(1);
   lastMonth.setMonth(lastMonth.getMonth() - 1);
   const lastMonthsFirstSaturday = getFirstSaturdayFrom(lastMonth);
@@ -19,7 +21,7 @@
 
   let dateTo: Date = $state(new Date());
   let dateTimeTo = $derived(() => {
-    const dateTimeTo = new Date(dateTo);
+    const dateTimeTo = new SvelteDate(dateTo);
     dateTimeTo.setHours(23);
     dateTimeTo.setMinutes(59);
     dateTimeTo.setSeconds(59);
@@ -53,7 +55,7 @@
   const viewMode = createViewModeStore();
 
   function getFirstSaturdayFrom(originalDate: Date) {
-    const date = new Date(originalDate);
+    const date = new SvelteDate(originalDate);
 
     for (let i = 0; i < 8; i++) {
       if (date.getDay() === 6) {
@@ -77,7 +79,7 @@
     </div>
     <Switch checked={showArchived} onCheckedChange={(d) => (showArchived = d.checked)}>Archivierte anzeigen</Switch>
     <div class="grow"></div>
-    <a href="/new" type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
+    <a href={resolve('/new')} type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
   </div>
   <div class="h-full w-full overflow-hidden">
     {#if kudosFiltered.length <= 0}

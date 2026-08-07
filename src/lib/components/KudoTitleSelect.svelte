@@ -45,7 +45,7 @@
   </SimpleTooltip>
 
   <div bind:this={dropDownContent} class="dropdown-content rounded-md {showClass}">
-    {#each Object.entries(kudoTitles) as [__, kudoTitle]}
+    {#each Object.values(kudoTitles) as kudoTitle (kudoTitle)}
       <button
         style={`background-color: ${kudoTitle.color}`}
         class="block cursor-pointer overflow-hidden p-3 text-white"

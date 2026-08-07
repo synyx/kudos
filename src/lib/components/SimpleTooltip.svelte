@@ -31,7 +31,7 @@
       {#if shortcuts}
         <br />
         <div class="flex flex-wrap gap-2">
-          {#each shortcuts as shortcut}
+          {#each shortcuts as shortcut (shortcut)}
             <kbd class="kbd">{shortcut}</kbd>
           {/each}
         </div>
