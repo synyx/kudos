@@ -68,8 +68,6 @@ KUDOS_MIGRATE="1"
 
 ### Database Setup
 
-**Important**: Starting with Helm Chart v2.0.0, Kudos requires an external PostgreSQL database. The application no longer manages database infrastructure.
-
 📖 **See [DATABASE_SETUP.md](DATABASE_SETUP.md)** for comprehensive instructions on setting up PostgreSQL for Kudos, including:
 
 - Cloud database services (AWS RDS, Google Cloud SQL, Azure Database)
@@ -114,13 +112,11 @@ To create a new release, follow these steps:
 
 1. **Update version numbers:**
    - Update `version` in `package.json` (e.g., `1.2.1` → `1.3.0`)
-   - Update `appVersion` in `helm/kudos/Chart.yaml` to match the package.json version
-   - If the Helm chart itself has changes, also update `version` in `helm/kudos/Chart.yaml` (e.g., `2.0.0` → `2.1.0`)
 
 2. **Commit the version changes:**
 
    ```bash
-   git add package.json helm/kudos/Chart.yaml
+   git add package.json
    git commit -m "chore: bump version to v1.3.0"
    git push origin main
    ```
@@ -139,10 +135,6 @@ Once you push the tag, GitHub Actions will automatically:
   - `ghcr.io/synyx/kudos:v1.3.0` (versioned tag)
   - `ghcr.io/synyx/kudos:main` (also updated from main branch pushes)
 
-- **Helm Chart**: When changes are pushed to the `helm/` directory, the chart is automatically packaged and published to GitHub Pages:
-  - Packaged chart: `docs/helm/kudos-2.1.0.tgz`
-  - Repository index: `docs/helm/index.yaml`
-
 ### GitHub Release
 
 After the automated builds complete, manually create a GitHub Release:
@@ -155,11 +147,7 @@ After the automated builds complete, manually create a GitHub Release:
 
 ### Version Strategy
 
-- **Application version** (`package.json` and `Chart.yaml` `appVersion`): Follow [Semantic Versioning](https://semver.org/)
+- **Application version** (`package.json`): Follow [Semantic Versioning](https://semver.org/)
   - MAJOR: Breaking changes
   - MINOR: New features (backward compatible)
   - PATCH: Bug fixes (backward compatible)
-
-- **Helm chart version** (`Chart.yaml` `version`): Increment when chart configuration changes
-  - Update even if only app version changes
-  - Use separate versioning from application version
