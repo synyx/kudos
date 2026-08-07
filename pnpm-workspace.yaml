@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: false
+minimumReleaseAge: 4320 # 3 days
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - chokidar@4.0.3 # https://github.com/paulmillr/chokidar/issues/1440

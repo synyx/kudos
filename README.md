@@ -57,6 +57,7 @@ The following environment variables can be configured:
 - `KUDOS_MIGRATE`: Set to `"1"` or `"true"` to run database migrations on startup (optional)
 
 Example:
+
 ```bash
 DATABASE_URL="postgresql://kudos:secret@localhost:5432/kudos"
 ORIGIN="https://your-domain.com"
@@ -70,6 +71,7 @@ KUDOS_MIGRATE="1"
 **Important**: Starting with Helm Chart v2.0.0, Kudos requires an external PostgreSQL database. The application no longer manages database infrastructure.
 
 📖 **See [DATABASE_SETUP.md](DATABASE_SETUP.md)** for comprehensive instructions on setting up PostgreSQL for Kudos, including:
+
 - Cloud database services (AWS RDS, Google Cloud SQL, Azure Database)
 - Self-managed PostgreSQL with operators (CloudNative-PG, Zalando)
 - Security best practices and connection configuration
@@ -116,6 +118,7 @@ To create a new release, follow these steps:
    - If the Helm chart itself has changes, also update `version` in `helm/kudos/Chart.yaml` (e.g., `2.0.0` → `2.1.0`)
 
 2. **Commit the version changes:**
+
    ```bash
    git add package.json helm/kudos/Chart.yaml
    git commit -m "chore: bump version to v1.3.0"

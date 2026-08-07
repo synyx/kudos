@@ -1,3 +1,5 @@
+/// <reference types="@types/node" />
+
 import { defineConfig } from 'drizzle-kit';
 
 const dbUrl = process.env.DATABASE_URL;

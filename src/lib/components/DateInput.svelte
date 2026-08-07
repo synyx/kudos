@@ -3,7 +3,7 @@
   import { run } from 'svelte/legacy';
 
   interface Props {
-    date?: any;
+    date?: Date;
     id?: string;
   }
 

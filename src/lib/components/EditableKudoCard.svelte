@@ -82,8 +82,7 @@
           name="content"
           bind:value={contentValue}
           placeholder="<Kudos>"
-          rows="8"
-        ></textarea>
+          rows="8"></textarea>
       </div>
     {/snippet}
     {#snippet to()}

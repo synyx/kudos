@@ -1,15 +1,10 @@
 <script lang="ts">
   import '../app.css';
   import { Navigation } from '@skeletonlabs/skeleton-svelte';
-  import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
-
-  import { arrow, autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
   import { createViewModeStore } from '$lib/utils/stores';
   import Icon from '@iconify/svelte';
-  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Logo from '$lib/components/Logo.svelte';
-  import { AppBar } from '@skeletonlabs/skeleton-svelte';
   import LightSwitch from '$lib/components/LightSwitch.svelte';
 
   interface Props {
@@ -19,10 +14,6 @@
   let { children }: Props = $props();
 
   const viewMode = createViewModeStore();
-
-  function navigateHome() {
-    goto('/');
-  }
 
   let activeNavItem = $derived.by(() => {
     if (page.route.id === '/new') {

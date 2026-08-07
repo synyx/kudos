@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:14.4
+    image: postgres:18.4
     environment:
       POSTGRES_USER: kudos
       POSTGRES_PASSWORD: secret
@@ -11,16 +11,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  app:
-    # build: .
-    image: ghcr.io/synyx/kudos:main
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: "postgresql://kudos:secret@db:5432/kudos"
-      ORIGIN: "http://localhost:3000"
-      KUDOS_MIGRATE: "1"
-    ports:
-      - "3000:3000"

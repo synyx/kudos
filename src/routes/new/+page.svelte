@@ -4,7 +4,6 @@
   import type { ActionData } from './$types';
   import { enhance } from '$app/forms';
   import type { Strokes } from '$lib/utils/types';
-  import SimpleModal from '$lib/components/SimpleModal.svelte';
   import { Toaster, createToaster } from '@skeletonlabs/skeleton-svelte';
 
   const toaster = createToaster();

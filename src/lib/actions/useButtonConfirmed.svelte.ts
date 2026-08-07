@@ -15,7 +15,7 @@ export function confirmed(button: HTMLButtonElement, options: ButtonConfirmedOpt
 
   const { title, body, onConfirm, onCancel } = options ?? {};
 
-  const modal = mount(SimpleModal, {
+  mount(SimpleModal, {
     // TODO: unmount
     target: document.body,
     props: {

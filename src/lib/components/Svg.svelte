@@ -194,7 +194,7 @@
     style="touchAction: 'none'"
   >
     {#if animate}
-      {#each strokes as stroke, i}
+      {#each strokes as stroke, i (i)}
         <path
           class="animated"
           stroke={stroke.strokeOptions.colorFill}
@@ -209,7 +209,7 @@
         />
       {/each}
     {:else}
-      {#each strokes as stroke}
+      {#each strokes as stroke, i (i)}
         <path
           fill={stroke.strokeOptions.colorFill}
           fill-opacity={stroke.strokeOptions.colorFillOpacity}
