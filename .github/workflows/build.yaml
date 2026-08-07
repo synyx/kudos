@@ -1,0 +1,19 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          cache: "pnpm"
+      - name: Build app
+        run: |
+          pnpm ci
+          DOCKER_BUILDING=1 pnpm build
