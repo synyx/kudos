@@ -102,30 +102,7 @@ The application will be available at `http://localhost:3000`. The Docker Compose
 
 ### Helm Chart
 
-A Helm chart is available for Kubernetes deployment. **You must set up an external PostgreSQL database before installing** (see [DATABASE_SETUP.md](DATABASE_SETUP.md)).
-
-The chart uses an init container to handle database migrations automatically, so the `KUDOS_MIGRATE` environment variable is not needed in the main application container.
-
-#### Install via Helm
-
-```sh
-# add repo
-helm repo add synyx https://synyx.github.io/kudos/docs/helm
-helm repo update
-
-# inspect defaults
-helm show values synyx/kudos > values.yaml
-# edit as needed - CONFIGURE POSTGRESQL CONNECTION
-
-# install or upgrade
-helm upgrade --install kudos synyx/kudos \
-  --version <CHART VERSION> \
-  -f values.yaml
-```
-
-#### Migrating from v1.x to v2.0.0
-
-**Important**: Kudos Helm Chart v2.0.0 introduces breaking changes by removing database management. If you're upgrading from an earlier version, please follow the [Migration Guide](MIGRATION.md) for step-by-step instructions.
+The helm chart for Kudos is **deprecated** and will be removed in the future.
 
 ## Releasing
 
