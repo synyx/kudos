@@ -77,12 +77,7 @@
       <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
         <Icon icon="material-symbols:search" class="text-surface-500 text-xl" />
       </div>
-      <input
-        type="text"
-        placeholder="Suche..."
-        bind:value={searchQuery}
-        class="input pl-10 pr-4 py-2 w-full"
-      />
+      <input type="text" placeholder="Suche..." bind:value={searchQuery} class="input pl-10 pr-4 py-2 w-full" />
     </div>
     <Switch checked={showArchived} onCheckedChange={(d) => (showArchived = d.checked)}>Archivierte anzeigen</Switch>
     <div class="grow"></div>

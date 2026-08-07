@@ -38,6 +38,7 @@ kubectl cp kudos-pod:/tmp/kudos_backup.sql ./kudos_backup.sql
 ### 2. Set Up External PostgreSQL Database
 
 Follow the comprehensive [DATABASE_SETUP.md](../DATABASE_SETUP.md) guide to:
+
 - Choose a database hosting option (cloud services, operators, self-managed)
 - Set up your PostgreSQL instance
 - Configure network connectivity
@@ -63,16 +64,16 @@ Replace your existing values.yaml with the new configuration structure:
 # New v2.0.0 configuration structure
 postgresql:
   # REQUIRED: Your external PostgreSQL host
-  host: "your-database-host.com"  # Replace with your database host
+  host: 'your-database-host.com' # Replace with your database host
   port: 5432
-  database: "kudos"
-  sslMode: "require"  # recommended for production
-  
+  database: 'kudos'
+  sslMode: 'require' # recommended for production
+
   # Authentication using existing secret
   auth:
-    existingSecret: "kudos-db-credentials"
-    usernameKey: "username"
-    passwordKey: "password"
+    existingSecret: 'kudos-db-credentials'
+    usernameKey: 'username'
+    passwordKey: 'password'
 
 # Remove all postgres.* configuration from previous versions
 # The following are NO LONGER SUPPORTED:
@@ -129,11 +130,13 @@ psql "postgresql://username:password@localhost:5432/kudos" < kudos_backup.sql
 ### 8. Verify the Migration
 
 1. **Check pod status**:
+
    ```bash
    kubectl get pods -n your-namespace
    ```
 
 2. **Verify database connectivity**:
+
    ```bash
    kubectl logs deployment/kudos -n your-namespace
    ```
@@ -147,17 +150,17 @@ psql "postgresql://username:password@localhost:5432/kudos" < kudos_backup.sql
 
 ### Old vs New Configuration
 
-| Old Configuration | New Configuration | Notes |
-|------------------|-------------------|-------|
-| `postgres.mode: "selfcontained"` | **REMOVED** | Use external database |
-| `postgres.mode: "zalando"` | **REMOVED** | Set up Zalando cluster separately |
-| `postgres.mode: "cnpg"` | **REMOVED** | Set up CNPG cluster separately |
-| `app.db.host` | `postgresql.host` | Now required |
-| `app.db.port` | `postgresql.port` | Default: 5432 |
-| `app.db.name` | `postgresql.database` | Default: "kudos" |
-| `app.db.ssl.mode` | `postgresql.sslMode` | Default: "disable" |
-| `app.db.existingSecret` | `postgresql.auth.existingSecret` | Secret name |
-| `app.db.existingSecret.keys.*` | `postgresql.auth.*Key` | Key names in secret |
+| Old Configuration                | New Configuration                | Notes                             |
+| -------------------------------- | -------------------------------- | --------------------------------- |
+| `postgres.mode: "selfcontained"` | **REMOVED**                      | Use external database             |
+| `postgres.mode: "zalando"`       | **REMOVED**                      | Set up Zalando cluster separately |
+| `postgres.mode: "cnpg"`          | **REMOVED**                      | Set up CNPG cluster separately    |
+| `app.db.host`                    | `postgresql.host`                | Now required                      |
+| `app.db.port`                    | `postgresql.port`                | Default: 5432                     |
+| `app.db.name`                    | `postgresql.database`            | Default: "kudos"                  |
+| `app.db.ssl.mode`                | `postgresql.sslMode`             | Default: "disable"                |
+| `app.db.existingSecret`          | `postgresql.auth.existingSecret` | Secret name                       |
+| `app.db.existingSecret.keys.*`   | `postgresql.auth.*Key`           | Key names in secret               |
 
 ### New Secret Creation Option
 
@@ -167,12 +170,12 @@ v2.0.0 adds the ability to create secrets via Helm:
 postgresql:
   auth:
     # Option 1: Use existing secret (recommended)
-    existingSecret: "kudos-db-credentials"
-    
+    existingSecret: 'kudos-db-credentials'
+
     # Option 2: Create new secret via Helm
     createSecret: true
-    username: "kudos"
-    password: "your-secure-password"  # Required if createSecret: true
+    username: 'kudos'
+    password: 'your-secure-password' # Required if createSecret: true
 ```
 
 ## Troubleshooting
@@ -215,7 +218,7 @@ If you need to rollback to a previous version:
 With v2.0.0, you're responsible for:
 
 - **Database backups**: Set up automated backups
-- **Database updates**: Manage PostgreSQL version updates  
+- **Database updates**: Manage PostgreSQL version updates
 - **Scaling**: Handle database scaling needs
 - **Monitoring**: Monitor database performance
 - **Security**: Manage database security and access
