@@ -1,3 +1,0 @@
-# DEPRECATED: Kudos Helm Chart
-
-DEPRECATED: The helm chart for Kudos is DEPRECATED and will be removed in the future.
