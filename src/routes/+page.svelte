@@ -5,7 +5,7 @@
   import KudosPresentationView from '$lib/views/KudosPresentationView.svelte';
   import { createViewModeStore } from '$lib/utils/stores';
   import type { PageProps } from './$types';
-  import { Switch } from '@skeletonlabs/skeleton-svelte';
+  import Switch from '$lib/components/Switch.svelte';
   import Icon from '@iconify/svelte';
   import { SvelteDate } from 'svelte/reactivity';
   import { resolve } from '$app/paths';
@@ -81,7 +81,7 @@
     <div class="grow"></div>
     <a href={resolve('/new')} type="button" class="btn btn-md preset-filled-primary-500">Kudo erstellen</a>
   </div>
-  <div class="h-full w-full overflow-hidden">
+  <div class="h-full w-full overflow-hidden bg-tertiary-400 dark:bg-surface-600">
     {#if kudosFiltered.length <= 0}
       <div class="flex flex-row h-full w-full justify-center items-center">
         <p class="text-3xl">Keine Kudos gefunden</p>
