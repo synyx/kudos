@@ -5,7 +5,7 @@
   import KudosPresentationView from '$lib/views/KudosPresentationView.svelte';
   import { createViewModeStore } from '$lib/utils/stores';
   import type { PageProps } from './$types';
-  import { Switch } from '@skeletonlabs/skeleton-svelte';
+  import Switch from '$lib/components/Switch.svelte';
   import Icon from '@iconify/svelte';
   import { SvelteDate } from 'svelte/reactivity';
   import { resolve } from '$app/paths';

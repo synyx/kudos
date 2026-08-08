@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { Tooltip } from '@skeletonlabs/skeleton-svelte';
+  import { onDestroy } from 'svelte';
 
   let {
     children,
@@ -15,14 +15,41 @@
     shortcuts?: string[];
     disabled?: boolean;
   } = $props();
+
+  const openDelay = 500;
+
+  let open = $state(false);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  function show() {
+    if (disabled) return;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => (open = true), openDelay);
+  }
+
+  function hide() {
+    clearTimeout(timeoutId);
+    open = false;
+  }
+
+  onDestroy(() => clearTimeout(timeoutId));
 </script>
 
-<Tooltip zIndex="10" classes="w-full" triggerClasses="w-full" {disabled} openDelay={500}>
-  {#snippet trigger()}
-    {@render children()}
-  {/snippet}
-  {#snippet content()}
-    <div class="card preset-filled-surface-100-900 p-2">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<span
+        class="relative inline-block w-full"
+        onmouseenter={show}
+        onmouseleave={hide}
+        onfocusin={show}
+        onfocusout={hide}
+>
+  {@render children()}
+
+  {#if open && !disabled}
+    <div
+            role="tooltip"
+            class="card preset-filled-surface-100-900 absolute bottom-full left-1/2 z-10 mb-2 w-max max-w-xs -translate-x-1/2 p-2 shadow-lg"
+    >
       <p>{text}</p>
       {#if subText}
         <br />
@@ -37,5 +64,5 @@
         </div>
       {/if}
     </div>
-  {/snippet}
-</Tooltip>
+  {/if}
+</span>
