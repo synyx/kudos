@@ -40,7 +40,7 @@
     "eslint": "10.8.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-svelte": "3.22.0",
-    "globals": "17.9.0",
+    "globals": "17.10.0",
     "jsdom": "30.0.1",
     "perfect-freehand": "1.2.3",
     "prettier": "3.9.6",
