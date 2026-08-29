@@ -34,7 +34,7 @@
     "@tailwindcss/vite": "4.3.3",
     "@testing-library/jest-dom": "7.0.0",
     "@testing-library/svelte": "5.4.2",
-    "@types/node": "26.1.2",
+    "@types/node": "26.3.0",
     "debounce": "3.0.0",
     "drizzle-kit": "0.31.10",
     "eslint": "10.8.1",
