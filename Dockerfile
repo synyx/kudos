@@ -1,4 +1,4 @@
-FROM node:26.7.0-slim AS build
+FROM node:26.8.1-slim AS build
 
 WORKDIR /app
 COPY . .
@@ -12,7 +12,7 @@ RUN npm install --global corepack@latest \
 
 #######################################
 
-FROM node:26.7.0-alpine
+FROM node:26.8.1-alpine
 
 WORKDIR /app
 RUN rm -rf ./*
