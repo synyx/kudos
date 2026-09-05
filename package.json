@@ -39,7 +39,7 @@
     "drizzle-kit": "0.31.10",
     "eslint": "10.8.1",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-svelte": "3.22.0",
+    "eslint-plugin-svelte": "3.23.0",
     "globals": "17.12.0",
     "jsdom": "30.0.1",
     "perfect-freehand": "1.2.3",
