@@ -9,7 +9,7 @@
   import { preventDefault } from '$lib/utils/eventModifiers';
   import { createDrawSettingsStore } from '$lib/utils/stores';
   import SimpleTooltip from './SimpleTooltip.svelte';
-  import { Switch } from '@skeletonlabs/skeleton-svelte';
+  import Switch from '$lib/components/Switch.svelte';
 
   interface Props {
     initialKudoTitleId: KudoTitles;
