@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  import { Switch } from '@skeletonlabs/skeleton-svelte';
+  import Switch from './Switch.svelte';
 
   let checked = $state(false);
 
@@ -19,8 +19,7 @@
 
 <svelte:head>
   <script>
-    const mode = localStorage.getItem('mode') || 'light';
-    document.documentElement.setAttribute('data-mode', mode);
+    document.documentElement.setAttribute('data-mode', localStorage.getItem('mode') || 'light');
   </script>
 </svelte:head>
 

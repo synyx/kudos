@@ -1,3 +1,4 @@
+lockfileVersion: '9.0'
 ---
 lockfileVersion: '9.0'
 
@@ -156,7 +157,6 @@ snapshots:
       '@pnpm/exe.win32-x64': 12.6.0
 
 ---
-lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true

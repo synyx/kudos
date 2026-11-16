@@ -1,11 +1,11 @@
 <script lang="ts">
   import '../app.css';
-  import { Navigation } from '@skeletonlabs/skeleton-svelte';
   import { createViewModeStore } from '$lib/utils/stores';
   import Icon from '@iconify/svelte';
   import { page } from '$app/state';
   import Logo from '$lib/components/Logo.svelte';
   import LightSwitch from '$lib/components/LightSwitch.svelte';
+  import { resolve } from '$app/paths';
 
   interface Props {
     children?: import('svelte').Snippet;
@@ -22,50 +22,88 @@
 
     return $viewMode;
   });
+
+  type NavItem = {
+    id: 'create' | 'single' | 'gallery' | 'presentation';
+    label: string;
+    href: string;
+    icon: string;
+    onclick?: () => void;
+  };
+
+  const navItems: NavItem[] = [
+    { id: 'create', label: 'Kudo erstellen', href: '/new', icon: 'mdi:plus-circle' },
+    {
+      id: 'single',
+      label: 'Einzelmodus',
+      href: '/',
+      icon: 'mdi:view-array',
+      onclick: () => ($viewMode = 'single'),
+    },
+    {
+      id: 'gallery',
+      label: 'Galerie',
+      href: '/',
+      icon: 'mdi:view-module',
+      onclick: () => ($viewMode = 'gallery'),
+    },
+    {
+      id: 'presentation',
+      label: 'Präsentation',
+      href: '/',
+      icon: 'mdi:presentation-play',
+      onclick: () => ($viewMode = 'presentation'),
+    },
+  ];
 </script>
+
+{#snippet navTile(item: NavItem, orientation: 'vertical' | 'horizontal')}
+  {@const isActive = activeNavItem === item.id}
+  <a
+    href={resolve(item.href as Parameters<typeof resolve>[0])}
+    onclick={item.onclick}
+    aria-current={isActive ? 'page' : undefined}
+    class={[
+      'flex items-center rounded-lg transition-colors',
+      orientation === 'vertical'
+        ? 'w-full flex-col gap-1 px-2 py-3 text-center'
+        : 'flex-1 flex-col gap-1 py-2 text-center',
+      isActive
+        ? 'bg-primary-400 text-white'
+        : 'text-surface-900 dark:text-surface-50 hover:bg-tertiary-500/50 dark:hover:bg-surface-800',
+    ].join(' ')}
+  >
+    <Icon class="w-full text-3xl" icon={item.icon} />
+    <span class="text-xs">{item.label}</span>
+  </a>
+{/snippet}
 
 <div class="grid min-h-screen grid-rows-[1fr_auto]">
   <!-- Grid Columns -->
   <div class="grid grid-cols-1 md:grid-cols-[auto_1fr]">
     <!-- Left Sidebar. -->
     <aside class="hidden max-h-screen md:block sticky top-0">
-      <div class="hidden h-full justify-between md:flex md:flex-col">
-        <Navigation.Rail background="bg-tertiary-600 dark:bg-surface-900" value={activeNavItem}>
-          {#snippet tiles()}
-            <Navigation.Tile href="/">
-              <div class="w-16">
-                <Logo />
-              </div>
-            </Navigation.Tile>
+      <div class="hidden h-full justify-between md:flex md:flex-col bg-tertiary-600 dark:bg-surface-900">
+        <nav class="flex flex-col items-center gap-2 p-2">
+          <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+          <a href="/" class="w-16 py-2">
+            <Logo />
+          </a>
 
-            <span class="grow"></span>
+          <span class="grow"></span>
 
-            <Navigation.Tile id="create" label="Kudo erstellen" labelClasses="text-center" href="/new"
-              ><Icon class="text-3xl" icon="mdi:plus-circle" /></Navigation.Tile
-            >
-            <hr class="my-4 w-full" />
+          {@render navTile(navItems[0], 'vertical')}
 
-            <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
-              ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
-            >
+          <hr class="my-4 w-full" />
 
-            <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
-              ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
-            >
+          {@render navTile(navItems[1], 'vertical')}
+          {@render navTile(navItems[2], 'vertical')}
+          {@render navTile(navItems[3], 'vertical')}
 
-            <Navigation.Tile
-              id="presentation"
-              label="Präsentation"
-              href="/"
-              onclick={() => ($viewMode = 'presentation')}
-              ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
-            >
+          <span class="grow"></span>
+        </nav>
 
-            <span class="grow"></span>
-          {/snippet}
-        </Navigation.Rail>
-
-        <div class="flex flex-col items-center justify-center gap-4 p-4 bg-tertiary-600 dark:bg-surface-900">
+        <div class="flex flex-col items-center justify-center gap-4 p-4">
           <LightSwitch />
           <a
             type="button"
@@ -87,19 +125,11 @@
   <!-- Footer -->
   <footer class="h-fit sticky bottom-0">
     <div class="block md:hidden">
-      <Navigation.Bar value={activeNavItem} background="bg-tertiary-600 dark:bg-surface-900">
-        <Navigation.Tile id="single" label="Einzelmodus" href="/" onclick={() => ($viewMode = 'single')}
-          ><Icon class="w-full text-3xl" icon="mdi:view-array" /></Navigation.Tile
-        >
-
-        <Navigation.Tile id="gallery" label="Galerie" href="/" onclick={() => ($viewMode = 'gallery')}
-          ><Icon class="w-full text-3xl" icon="mdi:view-module" /></Navigation.Tile
-        >
-
-        <Navigation.Tile id="presentation" label="Präsentation" href="/" onclick={() => ($viewMode = 'presentation')}
-          ><Icon class="w-full text-3xl" icon="mdi:presentation-play" /></Navigation.Tile
-        >
-      </Navigation.Bar>
+      <nav class="flex bg-tertiary-600 dark:bg-surface-900">
+        {@render navTile(navItems[1], 'horizontal')}
+        {@render navTile(navItems[2], 'horizontal')}
+        {@render navTile(navItems[3], 'horizontal')}
+      </nav>
     </div>
   </footer>
 </div>
