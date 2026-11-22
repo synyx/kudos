@@ -190,7 +190,7 @@ importers:
         version: 5.2.2(svelte@5.57.3(@typescript-eslint/types@8.70.0))
       '@skeletonlabs/skeleton':
         specifier: ^3.1.3
-        version: 3.2.2(tailwindcss@4.3.4)
+        version: 3.2.2(tailwindcss@4.3.5)
       '@skeletonlabs/skeleton-svelte':
         specifier: ^1.2.2
         version: 1.5.3(svelte@5.57.3(@typescript-eslint/types@8.70.0))
@@ -205,10 +205,10 @@ importers:
         version: 7.3.1(svelte@5.57.3(@typescript-eslint/types@8.70.0))(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
       '@tailwindcss/forms':
         specifier: 0.5.11
-        version: 0.5.11(tailwindcss@4.3.4)
+        version: 0.5.11(tailwindcss@4.3.5)
       '@tailwindcss/typography':
         specifier: 0.5.20
-        version: 0.5.20(tailwindcss@4.3.4)
+        version: 0.5.20(tailwindcss@4.3.5)
       '@tailwindcss/vite':
         specifier: 4.3.5
         version: 4.3.5(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
@@ -264,8 +264,8 @@ importers:
         specifier: 0.12.0
         version: 0.12.0(svelte@5.57.3(@typescript-eslint/types@8.70.0))
       tailwindcss:
-        specifier: 4.3.4
-        version: 4.3.4
+        specifier: 4.3.5
+        version: 4.3.5
       typescript:
         specifier: 6.0.3
         version: 6.0.3
@@ -2566,9 +2566,6 @@ packages:
     resolution: {integrity: sha512-5mAftM3SoDV9X0zdF386F9p2pv8iKOwi/KfBS1XnBAkVCKFzVOLHUoa8iGWAt4buoicLmyWVRpuuD5wplXOQsg==}
     engines: {node: '>=18'}
 
-  tailwindcss@4.3.4:
-    resolution: {integrity: sha512-PCJZTFFdG+sL3gvnP1Do9o6GbkvH2q0p04xSs3f7cSvmAeK+sttG+/7ncK1fdRwKFfC7n+wDDJaOMBSefkI9ow==}
-
   tailwindcss@4.3.5:
     resolution: {integrity: sha512-FcQk9BuffmEHJP2G0XmB2SplU1aLTI7j07Kunk+U74Ny+XiWOtzXz9aujFZ/avntw1e2cOv/3PkgzflQ7gX2vQ==}
 
@@ -3397,9 +3394,9 @@ snapshots:
       '@zag-js/tooltip': 1.18.3
       svelte: 5.57.3(@typescript-eslint/types@8.70.0)
 
-  '@skeletonlabs/skeleton@3.2.2(tailwindcss@4.3.4)':
+  '@skeletonlabs/skeleton@3.2.2(tailwindcss@4.3.5)':
     dependencies:
-      tailwindcss: 4.3.4
+      tailwindcss: 4.3.5
 
   '@standard-schema/spec@1.1.0': {}
 
@@ -3447,10 +3444,10 @@ snapshots:
       vite: 8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5)
       vitefu: 1.1.3(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))
 
-  '@tailwindcss/forms@0.5.11(tailwindcss@4.3.4)':
+  '@tailwindcss/forms@0.5.11(tailwindcss@4.3.5)':
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 4.3.4
+      tailwindcss: 4.3.5
 
   '@tailwindcss/node@4.3.5':
     dependencies:
@@ -3513,10 +3510,10 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.5
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.5
 
-  '@tailwindcss/typography@0.5.20(tailwindcss@4.3.4)':
+  '@tailwindcss/typography@0.5.20(tailwindcss@4.3.5)':
     dependencies:
       postcss-selector-parser: 6.0.10
-      tailwindcss: 4.3.4
+      tailwindcss: 4.3.5
 
   '@tailwindcss/vite@4.3.5(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.5))':
     dependencies:
@@ -4753,8 +4750,6 @@ snapshots:
       zimmerframe: 1.1.5
     transitivePeerDependencies:
       - '@typescript-eslint/types'
-
-  tailwindcss@4.3.4: {}
 
   tailwindcss@4.3.5: {}
 
